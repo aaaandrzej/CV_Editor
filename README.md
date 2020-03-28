@@ -1,7 +1,22 @@
 # CV_Editor
-#### Projekt zaliczeniowy na kurs Code:me - Python zaawansowany
+#### Projekt zaliczeniowy na kurs Code:me - Python zaawansowany - Gdańsk, 2020
 
-W ramach projektu użytkownik stworzy od podstaw aplikację RESTową służącą do tworzenia i edycji danych CV przy wykorzystaniu frameworku Flask. Aplikacja będzie wspierać autentykację użytkowników za pomocą hasła i ich autoryzację. Projekt nie przewiduje stworzenia frontu do aplikacji - obsługa odbywać się bedzie za pomocą Postman lub podobnego narzędzia.
+###### ___Aby zaliczyć zajęcia, należy samodzielnie stworzyć aplikację internetową. Aplikacja ma wykonywać pewne proste zadanie używając do tego danych zewnętrznych (użytkownik, zasoby Internetu). Zadanie dla aplikacji każdy musi wymyślić samemu.___
+
+###### _Wymagania kursu (niefunkcjonalne):_
+
+###### 1. Aplikacja ma zostać stworzona w oparciu o framework **Flask** (http://flask.pocoo.org/)
+###### 2. Aplikacja musi korzystać z SQLowej bazy danych, np. **SQLite** (https://docs.python.org/3/library/sqlite3.html)
+###### 3. Aplikacja musi przyjmować dane od użytkownika i zapisywać je do bazy danych.
+###### 4. Aplikacja musi analizować lub modyfikować dane w bazie zgodnie z wykonywanym przez nią zadaniem. 
+###### 5. Aplikacja musi prezentować dane przechowywane w bazie danych.
+###### 6. Aplikacja ma wykorzystywać silnik szablonów **Jinja2** (http://jinja.pocoo.org/docs/2.10/) do tworzenia dokumentu HTML.
+###### 7. Dane w aplikacji muszą być zabezpieczone przed nieuprawnionym dostępem i modyfikacją.
+###### 8. Aplikacja musi posiadać dokumentację
+
+
+<br>
+W ramach tego projektu uczestnik stworzy od podstaw aplikację RESTową służącą do tworzenia i edycji danych CV przy wykorzystaniu frameworku Flask. Aplikacja będzie wspierać autentykację użytkowników za pomocą hasła i ich autoryzację. Projekt nie przewiduje stworzenia frontu do aplikacji - obsługa odbywać się bedzie za pomocą Postman lub podobnego narzędzia.
 
 W celu lepszego poznania i zrozumienia działania aplikacji, uczestnik powinien w jak największym stopniu, samodzielnie zaimplementować konieczną funkcjonalność (np. routing, autoryzacja), ograniczając używanie zewnętrznych modułów do minimum.
 
@@ -21,48 +36,25 @@ W wyniku projektu użytkownik nabierze praktycznych umiejętności związanych z
 - dobrymi praktykami z zakresu autoryzacji i autentykacji użytkowników
 - optymalnym tworzeniem zapytań do bazy danych uwzględniających agregację danych z kilku tabel i obliczanie danych statystycznych
 
-### Sprinty
+### Etapy:
 
-#### Sprint 1
 
 - Zaprojektowanie interfejsu RESTowego aplikacji i schematu bazy danych.
 - Utworzenie nowego projektu pythonowego z zależnością dla frameworku Flask.
 - Utworzenie stubów dla wszystkich endpointów RESTowych (z wyjątkiem zarządzania użytkownikami i logowania)
 
-#### Sprint 2
+
 - Dodanie do projektu modułu SQAlchemy.
 - Konfigurowanie połączenia z bazą danych i sesji.
 - Stworzenie pythonowych modeli dla wszystkich tabel.
 - Dodanie do projektu modułu do migracji schematu bazy danych (alembic).
 - Implementacja endpointów.
 
-#### Sprint 3
+
 - Dodanie autoryzacji i autentykacji użytkowników.
 - Dodanie endpointów do zarządzania użytkownikami i zmiany własnego hasła przez użytkownika.
 - Zabezpieczanie aplikacji (endpointów) przed nieuprawnionym dostępem.
 
-#### Sprint 4 (dodatkowy)
-
-Propozycje:
+Propozycje dodatkowe:
 - Zaimplementowanie SSO
 - Deployment aplikacji do chmury AWS
-
-#### Test końcowy
-Weryfikacja kodu. Rozmowa sprawdzająca nabyte umiejętności i zastosowane rozwiązania.
-
-## Do powyższego należy dodać/ uwzględnić założenia projektu zaliczeniowegoo CODE:ME:
-
-### Projekt zaliczeniowy - Python zaawansowany
-
-Aby zaliczyć zajęcia, należy samodzielnie stworzyć aplikację internetową. Aplikacja ma wykonywać pewne proste zadanie używając do tego danych zewnętrznych (użytkownik, zasoby Internetu). Zadanie dla aplikacji każdy musi wymyślić samemu.
-
-Pozostałe wymagania:
-
-1. Aplikacja ma zostać stworzona w oparciu o framework **Flask** (http://flask.pocoo.org/)
-2. Aplikacja musi korzystać z SQLowej bazy danych, np. **SQLite** (https://docs.python.org/3/library/sqlite3.html)
-3. Aplikacja musi przyjmować dane od użytkownika i zapisywać je do bazy danych.
-4. Aplikacja musi analizować lub modyfikować dane w bazie zgodnie z wykonywanym przez nią zadaniem. 
-5. Aplikacja musi prezentować dane przechowywane w bazie danych.
-6. Aplikacja ma wykorzystywać silnik szablonów **Jinja2** (http://jinja.pocoo.org/docs/2.10/) do tworzenia dokumentu HTML.
-7. Dane w aplikacji muszą być zabezpieczone przed nieuprawnionym dostępem i modyfikacją.
-8. Aplikacja musi posiadać dokumentację
