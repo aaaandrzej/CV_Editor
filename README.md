@@ -38,22 +38,25 @@ W wyniku projektu użytkownik nabierze praktycznych umiejętności związanych z
 
 ### Etapy:
 
-
 - Zaprojektowanie interfejsu RESTowego aplikacji i schematu bazy danych.
 - Utworzenie nowego projektu pythonowego z zależnością dla frameworku Flask.
 - Utworzenie stubów dla wszystkich endpointów RESTowych (z wyjątkiem zarządzania użytkownikami i logowania)
-
+<br>
+<br>
 
 - Dodanie do projektu modułu SQAlchemy.
 - Konfigurowanie połączenia z bazą danych i sesji.
 - Stworzenie pythonowych modeli dla wszystkich tabel.
 - Dodanie do projektu modułu do migracji schematu bazy danych (alembic).
 - Implementacja endpointów.
-
+<br>
+<br>
 
 - Dodanie autoryzacji i autentykacji użytkowników.
 - Dodanie endpointów do zarządzania użytkownikami i zmiany własnego hasła przez użytkownika.
 - Zabezpieczanie aplikacji (endpointów) przed nieuprawnionym dostępem.
+<br>
+<br>
 
 Propozycje dodatkowe:
 - Zaimplementowanie SSO
