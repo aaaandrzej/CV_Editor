@@ -44,11 +44,25 @@ def query_insert_db(query, params, db="CV_Editor.db", table="basic_table"):
     # return
 
 
-# queries
+def query_remove_from_db(query, id=None, db="CV_Editor.db", table="basic_table"):
+
+    params = {"id": id}
+    conn = sqlite3.connect(db)
+    c = conn.cursor()
+    c.execute(query, params)
+
+    conn.commit()
+    conn.close()
+
+    return f"query {query} with params {params} deleted"
+
+
+# read all queries
 select_all = """
 SELECT * FROM "basic_table";
 """
 
+# read one queries
 select_one = """
 SELECT * FROM "basic_table" WHERE "id" = :id;
 """
@@ -63,8 +77,16 @@ VALUES (:firstname, :lastname, :python, :javascript, :sql, :english);
 insert_dummy_cv_params = {'firstname': 'Dummy', 'lastname': 'Dummer', 'python': 2, 'javascript': 0, 'sql': 1, 'english': 0}
 
 
+# remove queries
+remove_one = """
+DELETE FROM "basic_table" WHERE "id" = :id;
+"""
+
+
 if __name__ == '__main__':
+    pass
     # query_db(select_all)
     # print(query_read_db(select_all))
-    print(query_read_one_from_db(select_one, 5))
+    # print(query_read_one_from_db(select_one, 5))
     # query_insert_db(insert_dummy_cv, insert_dummy_cv_params)
+    # print(query_remove_from_db(remove_one, 1))
