@@ -34,15 +34,14 @@
     </table>
 </div>
 
-<!-- TODO jak tu dodać ifa żeby ładował tylko jak url jest /cv a nie cv/<id> ? -->
-
 <br>
 
+{% if not single_result %}
 <div class="ramka">
 <p>
     <h2>Dodaj CV:</h2>
 
-    <form method="post" action="cv">
+    <form method="post" action="">
     <a>Name: </a><input type="text" name="firstname_from_form"><br>
     <a>Surname: </a><input type="text" name="lastname_from_form"><br>
     <a>Python: </a><input type="number" name="python_from_form"><br>
@@ -54,6 +53,30 @@
 
 </p>
 </div>
+{% endif %}
+
+
+{% if single_result %}
+{% for record in all_db_records %} <!-- musialem tak zeby dostac sie do record.id -->
+<div class="ramka">
+<p>
+    <h2>Zmień CV {{ record.id }}:</h2>
+
+    <form method="post" action="{{ record.id }}">
+    <a>Name: </a><input type="text" name="firstname_from_form"><br>
+    <a>Surname: </a><input type="text" name="lastname_from_form"><br>
+    <a>Python: </a><input type="number" name="python_from_form"><br>
+    <a>JavaScript: </a><input type="number" name="javascript_from_form"><br>
+    <a>SQL: </a><input type="number" name="sql_from_form"><br>
+    <a>English: </a><input type="number" name="english_from_form"><br>
+    <input type="submit">
+    </form>
+
+</p>
+</div>
+{% endfor %}
+{% endif %}
+
 
 </body>
 </html>

@@ -1,9 +1,10 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect
 import json
 from db_queries import query_read_db
 from db_queries import query_read_one_from_db
 from db_queries import query_insert_db
 from db_queries import query_remove_from_db
+from db_queries import query_update_db
 
 
 app = Flask(__name__)
@@ -11,7 +12,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return "For API please use /api/cv or /api/cv/<id>, for WWW please use /cv or /cv<id>"
+    return "For API please use /api/cv or /api/cv/<id>, for HTML please use /cv or /cv<id>"
 
 
 # API
@@ -19,27 +20,27 @@ def index():
 @app.route('/api/cv', methods=['GET', 'POST'])
 def api_cv():
     if request.method == "GET":
-        return query_read_db("select_all.sql")
+        return query_read_db()
 
     elif request.method == "POST":
         query_data = request.get_json()
-        query_insert_db("insert_cv.sql", query_data)
-        return f"{query_data} cv added to db"
+        query_insert_db(query_data)
+        return "", 201
 
 
 @app.route('/api/cv/<id>', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def api_cv_id(id=None):
     if request.method == "GET":
-        return query_read_one_from_db("select_one.sql", id)
+        return query_read_one_from_db(id)
 
-    elif request.method == "POST":  # TODO co tu robić? nadpisywać dane cv? to ma sens?
+    elif request.method == "POST":  # TODO co tu robić? nadpisywać dane cv? wykorzystac metode update z cv
         return f"post cv {id} not yet supported"
 
     elif request.method == "DELETE":
-        query_remove_from_db("delete_one.sql", id)
-        return f"cv {id} successfully removed"
+        query_remove_from_db(id)
+        return "", 202  # TODO spr czy 202 to dobry kod tutaj
 
-    elif request.method == "PUT":  # TODO co tu robić? modyfikacja danego cv?
+    elif request.method == "PUT":  # TODO co tu robić? modyfikacja danego cv? ta metoda chyba tu nie ma sensu
         return f"put cv {id} not yet supported"
 
     else:
@@ -49,9 +50,12 @@ def api_cv_id(id=None):
 # HTML
 
 @app.route('/cv', methods=['GET', 'POST'])
+@app.route('/cv/', methods=['GET', 'POST'])
 def cv():
 
-    all_db_records = query_read_db("select_all.sql")
+    single_result = False
+
+    all_db_records = query_read_db()
     all_db_records_json = json.loads(all_db_records)
 
     if request.method == "GET":
@@ -67,25 +71,39 @@ def cv():
                   'english': request.form.get('english_from_form')
                   }
 
-        query_insert_db("insert_cv.sql", query_data)
+        query_insert_db(query_data)
 
-        # TODO jak wymusić przeładowanie tej strony po dodaniu nowego CV???
+        return redirect(request.url)
 
-    return render_template("index.html", all_db_records=all_db_records_json)
+    return render_template("index.html", all_db_records=all_db_records_json, single_result=single_result)
 
 
 @app.route('/cv/<id>', methods=['GET', 'POST'])
 def cv_id(id=None):
-    if id is None:
-        return "czyżbyś wszedł na /cv/ ?"  # TODO czemu to nie działa...?
 
-    if request.method == "GET":  # TODO todosek w htmlku jak wyłączyć/ zmienić formularz
-        one_db_record = query_read_one_from_db("select_one.sql", id)
-        one_db_record_json = json.loads(one_db_record)
-        return render_template("index.html", all_db_records=one_db_record_json)
+    single_result = True
 
-    elif request.method == "POST":  # TODO co z tym robimy - tzn co to powinno robić?
-        return f"post cv {id} not yet supported"
+    one_db_record = query_read_one_from_db(id)
+    one_db_record_json = json.loads(one_db_record)
+
+    if request.method == "GET":
+        pass
+
+    if request.method == "POST":
+        query_data = {
+                      'firstname': request.form.get('firstname_from_form'),
+                      'lastname': request.form.get('lastname_from_form'),
+                      'python': request.form.get('python_from_form'),
+                      'javascript': request.form.get('javascript_from_form'),
+                      'sql': request.form.get('sql_from_form'),
+                      'english': request.form.get('english_from_form')
+                     }
+
+        query_update_db(id, query_data)
+
+        return redirect(request.url)
+
+    return render_template("index.html", all_db_records=one_db_record_json, single_result=single_result)
 
 
 if __name__ == '__main__':
