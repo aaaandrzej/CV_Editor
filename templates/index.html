@@ -7,39 +7,12 @@
 <body>
 <h1>CV_Editor</h1>
 
-
-<!--
-<p>
-    Formularz:
-
-    <form method="post" action="add">
-    <input type="number" name="number_from_form">
-    <input type="submit">
-    </form>
-
-</p>
-
-
-<hr>
-
-    {% for record in all_db_records %}
-    <li>
-        <a href="/cv/{{ record.id }}">{{ record.firstname }} {{ record.lastname }} </a>
-    </li>
-    {% endfor %}
-
-<hr>
--->
-
-
 <div class="ramka">
-
-
-<table>
+    <table>
         <tr>
             <th>ID</th>
-            <th>Imię</th>
-            <th>Nazwisko</th>
+            <th>Name</th>
+            <th>Surname</th>
             <th>Python</th>
             <th>JavaScript</th>
             <th>SQL</th>
@@ -59,19 +32,28 @@
         {% endfor %}
 
     </table>
-
 </div>
 
-<!--
-<p>
-    Wszystkie liczby:
-    <br>
-    <a href="numbers?order=asc">rosnąco</a>
-    <br>
-    <a href="numbers?order=desc">malejąco</a>
-</p>
+<!-- TODO jak tu dodać ifa żeby ładował tylko jak url jest /cv a nie cv/<id> ? -->
 
--->
+<br>
+
+<div class="ramka">
+<p>
+    <h2>Dodaj CV:</h2>
+
+    <form method="post" action="cv">
+    <a>Name: </a><input type="text" name="firstname_from_form"><br>
+    <a>Surname: </a><input type="text" name="lastname_from_form"><br>
+    <a>Python: </a><input type="number" name="python_from_form"><br>
+    <a>JavaScript: </a><input type="number" name="javascript_from_form"><br>
+    <a>SQL: </a><input type="number" name="sql_from_form"><br>
+    <a>English: </a><input type="number" name="english_from_form"><br>
+    <input type="submit">
+    </form>
+
+</p>
+</div>
 
 </body>
 </html>
