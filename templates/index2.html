@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Osoba</title>
+</head>
+<body>
+<p>
+    Menu: <a href="/cv">Wróć do strony głównej</a>
+</p>
+
+<hr>
+
+<h2>Dane osoby:</h2>
+
+<div class="ramka">
+
+    {% if not imie %}
+    <p style="color: red">
+        Brak osoby o id: {{ id }}.
+    </p>
+    {% endif %}
+
+    {% if imie %}
+    <table>
+        <tr>
+            <td>Imię:</td>
+            <td>{{ imie }}</td>
+        </tr>
+        <tr>
+            <td>Nazwisko:</td>
+            <td>{{ nazwisko }}</td>
+        </tr>
+        <tr>
+            <td>Identyfikator w bazie:</td>
+            <td>{{id }}</td>
+        </tr>
+
+        {% if is_admin %}
+         <tr>
+            <td>Uprawnienia:</td>
+            <td>administrator</td>
+        </tr>
+        {% endif %}
+
+    </table>
+    {% endif %}
+
+
+
+</div>
+
+</body>
+</html>
+
+<style>
+    .ramka {
+        border: 1px solid navajowhite;
+        background: floralwhite;
+        padding: 20px;
+    }
+
+    table {
+        border-collapse: collapse;
+    }
+
+    td {
+        border: 1px solid black;
+        padding: 5px;
+    }
+</style>

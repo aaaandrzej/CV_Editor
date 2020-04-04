@@ -1,0 +1,1 @@
+DELETE FROM "basic_table" WHERE "id" = :id;

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CV_Editor ver. 0.000001</title>
+</head>
+<body>
+<h1>CV_Editor</h1>
+
+
+<!--
+<p>
+    Formularz:
+
+    <form method="post" action="add">
+    <input type="number" name="number_from_form">
+    <input type="submit">
+    </form>
+
+</p>
+
+
+<hr>
+
+    {% for record in all_db_records %}
+    <li>
+        <a href="/cv/{{ record.id }}">{{ record.firstname }} {{ record.lastname }} </a>
+    </li>
+    {% endfor %}
+
+<hr>
+-->
+
+
+<div class="ramka">
+
+
+<table>
+        <tr>
+            <th>ID</th>
+            <th>Imię</th>
+            <th>Nazwisko</th>
+            <th>Python</th>
+            <th>JavaScript</th>
+            <th>SQL</th>
+            <th>English</th>
+        </tr>
+
+        {% for record in all_db_records %}
+        <tr>
+            <th><a href="/cv/{{ record.id }}">{{ record.id }}</a></th>
+            <th>{{ record.firstname }}</th>
+            <th>{{ record.lastname }}</th>
+            <th>{{ record.python }}</th>
+            <th>{{ record.javascript }}</th>
+            <th>{{ record.sql }}</th>
+            <th>{{ record.english }}</th>
+        </tr>
+        {% endfor %}
+
+    </table>
+
+</div>
+
+<!--
+<p>
+    Wszystkie liczby:
+    <br>
+    <a href="numbers?order=asc">rosnąco</a>
+    <br>
+    <a href="numbers?order=desc">malejąco</a>
+</p>
+
+-->
+
+</body>
+</html>
+
+<style>
+    .ramka {
+        border: 1px solid navajowhite;
+        background: floralwhite;
+        padding: 20px;
+    }
+
+    table {
+        border-collapse: collapse;
+    }
+
+    th {
+        border: 1px solid black;
+        padding: 5px;
+    }
+</style>
