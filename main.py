@@ -20,7 +20,7 @@ def index():
 @app.route('/api/cv', methods=['GET', 'POST'])
 def api_cv():
     if request.method == "GET":
-        return query_read_db()
+        return json.dumps(query_read_db())
 
     elif request.method == "POST":
         query_data = request.get_json()
@@ -33,14 +33,29 @@ def api_cv_id(id=None):
     if request.method == "GET":
         return query_read_one_from_db(id)
 
-    elif request.method == "POST":  # TODO co tu robić? nadpisywać dane cv? wykorzystac metode update z cv
-        return f"post cv {id} not yet supported"
+    elif request.method == "POST":
+        json_data = request.get_json()
+
+        id = json_data["id"]
+
+        query_data = {
+            'firstname': json_data["firstname"],
+            'lastname': json_data["lastname"],
+            'python': json_data["python"],
+            'javascript': json_data["javascript"],
+            'sql': json_data["sql"],
+            'english': json_data["english"],
+        }
+
+        query_update_db(id, query_data)
+
+        return "", 202
 
     elif request.method == "DELETE":
         query_remove_from_db(id)
-        return "", 202  # TODO spr czy 202 to dobry kod tutaj
+        return "", 202
 
-    elif request.method == "PUT":  # TODO co tu robić? modyfikacja danego cv? ta metoda chyba tu nie ma sensu
+    elif request.method == "PUT":  # to chyba nie do końca ma sens, wywalić..?
         return f"put cv {id} not yet supported"
 
     else:
@@ -52,11 +67,9 @@ def api_cv_id(id=None):
 @app.route('/cv', methods=['GET', 'POST'])
 @app.route('/cv/', methods=['GET', 'POST'])
 def cv():
-
     single_result = False
 
     all_db_records = query_read_db()
-    all_db_records_json = json.loads(all_db_records)
 
     if request.method == "GET":
         pass
@@ -75,7 +88,7 @@ def cv():
 
         return redirect(request.url)
 
-    return render_template("index.html", all_db_records=all_db_records_json, single_result=single_result)
+    return render_template("index.html", all_db_records=all_db_records, single_result=single_result)
 
 
 @app.route('/cv/<id>', methods=['GET', 'POST'])
@@ -84,7 +97,6 @@ def cv_id(id=None):
     single_result = True
 
     one_db_record = query_read_one_from_db(id)
-    one_db_record_json = json.loads(one_db_record)
 
     if request.method == "GET":
         pass
@@ -103,7 +115,7 @@ def cv_id(id=None):
 
         return redirect(request.url)
 
-    return render_template("index.html", all_db_records=one_db_record_json, single_result=single_result)
+    return render_template("index.html", all_db_records=[one_db_record], single_result=single_result)
 
 
 if __name__ == '__main__':

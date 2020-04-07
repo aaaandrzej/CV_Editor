@@ -15,11 +15,11 @@ def query_read_db(db="CV_Editor.db", table="basic_table"):
 
     c.execute(query)
 
-    json_str = [dict(row) for row in c.fetchall()]
+    db_list_of_dicts = [dict(row) for row in c.fetchall()]
 
     conn.close()
 
-    return json.dumps(json_str)
+    return db_list_of_dicts
 
 
 def query_read_one_from_db(id=None, db="CV_Editor.db", table="basic_table"):
@@ -36,11 +36,11 @@ def query_read_one_from_db(id=None, db="CV_Editor.db", table="basic_table"):
 
     c.execute(query, params)
 
-    json_str = [dict(row) for row in c.fetchall()]  # TODO to jest result i to powinienem zwrócić jako obiekt a dopiero w main.py zamienić to na json
+    result = dict(c.fetchone())
 
     conn.close()
 
-    return json.dumps(json_str)  # TODO ta cala funkcja jest do przerobienia, to byla kopia read all
+    return result
 
 
 def query_insert_db(params, db="CV_Editor.db", table="basic_table"):
@@ -113,12 +113,11 @@ def query_remove_from_db(id=None, db="CV_Editor.db", table="basic_table"):
 
 
 if __name__ == '__main__':
-    # pass
-    # print(query_read_db("select_all.sql"))
-    # print(query_read_one_from_db("select_one.sql", 7))
-    # query_insert_db("insert_cv.sql", {'firstname': 'Dummy', 'lastname': 'Dummer', 'python': 2, 'javascript': 0, 'sql': 1,
-    #                           'english': 666})
+    pass
+    # print(query_read_db())
+    # print(query_read_one_from_db(999))
+    # query_insert_db("insert_cv.sql", {'firstname': 'Dummy', 'lastname': 'Dummer', 'python': 2, 'javascript': 0, 'sql': 1, 'english': 666})
     # print(query_remove_from_db("delete_one.sql", 5))
-    dummy_cv_params = {'firstname': 'Błażej', 'lastname': 'Od roweru', 'python': 7, 'javascript': 0, 'sql': 1,
-                              'english': 20}
-    query_update_db(9, dummy_cv_params)
+    # dummy_cv_params = {'firstname': 'Błażej', 'lastname': 'Od roweru', 'python': 7, 'javascript': 0, 'sql': 1,
+    #                           'english': 20}
+    # query_update_db(9, dummy_cv_params)
