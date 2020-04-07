@@ -16,7 +16,9 @@
 
 
 <br>
-W ramach tego projektu uczestnik stworzy od podstaw aplikację RESTową służącą do tworzenia i edycji danych CV przy wykorzystaniu frameworku Flask. Aplikacja będzie wspierać autentykację użytkowników za pomocą hasła i ich autoryzację. ~~Projekt nie przewiduje stworzenia frontu do aplikacji~~ - obsługa odbywać się bedzie za pomocą Postman lub podobnego narzędzia.
+W ramach tego projektu uczestnik stworzy od podstaw aplikację RESTową służącą do tworzenia i edycji danych CV przy wykorzystaniu frameworku Flask. Aplikacja będzie wspierać autentykację użytkowników za pomocą hasła i ich autoryzację.
+~~Projekt nie przewiduje stworzenia frontu do aplikacji~~
+- obsługa odbywać się bedzie za pomocą Postman lub podobnego narzędzia.
 
 W celu lepszego poznania i zrozumienia działania aplikacji, uczestnik powinien w jak największym stopniu, samodzielnie zaimplementować konieczną funkcjonalność (np. routing, autoryzacja), ograniczając używanie zewnętrznych modułów do minimum.
 
