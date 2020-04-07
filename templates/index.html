@@ -63,12 +63,12 @@
     <h2>Zmień CV {{ record.id }}:</h2>
 
     <form method="post" action="{{ record.id }}">
-    <a>Name: </a><input type="text" name="firstname_from_form"><br>
-    <a>Surname: </a><input type="text" name="lastname_from_form"><br>
-    <a>Python: </a><input type="number" name="python_from_form"><br>
-    <a>JavaScript: </a><input type="number" name="javascript_from_form"><br>
-    <a>SQL: </a><input type="number" name="sql_from_form"><br>
-    <a>English: </a><input type="number" name="english_from_form"><br>
+    <a>Name: </a><input type="text" name="firstname_from_form" value="{{record.firstname}}"><br>
+    <a>Surname: </a><input type="text" name="lastname_from_form" value="{{record.lastname}}"><br>
+    <a>Python: </a><input type="number" name="python_from_form" value="{{record.python}}"><br>
+    <a>JavaScript: </a><input type="number" name="javascript_from_form" value="{{record.javascript}}"><br>
+    <a>SQL: </a><input type="number" name="sql_from_form" value="{{record.sql}}"><br>
+    <a>English: </a><input type="number" name="english_from_form" value="{{record.english}}"><br>
     <input type="submit">
     </form>
 

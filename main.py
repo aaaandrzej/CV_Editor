@@ -36,7 +36,7 @@ def api_cv_id(id=None):
     elif request.method == "POST":
         json_data = request.get_json()
 
-        id = json_data["id"]
+        # id = json_data["id"]
 
         query_data = {
             'firstname': json_data["firstname"],
