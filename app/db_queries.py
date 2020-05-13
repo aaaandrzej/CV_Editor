@@ -1,10 +1,9 @@
 import sqlite3
-import json
 
 
-def query_read_db(db="CV_Editor.db", table="basic_table"):
+def query_read_db(db="app/CV_Editor.db", table="basic_table"):  # TODO zrobić względne ścieżki zamiast tych
 
-    query_file = "select_all.sql"
+    query_file = "app/sql/select_all.sql"
 
     conn = sqlite3.connect(db)
     conn.row_factory = sqlite3.Row # stackoverflow: This enables column access by name: row['column_name']
@@ -22,9 +21,9 @@ def query_read_db(db="CV_Editor.db", table="basic_table"):
     return db_list_of_dicts
 
 
-def query_read_one_from_db(id=None, db="CV_Editor.db", table="basic_table"):
+def query_read_one_from_db(id=None, db="app/CV_Editor.db", table="basic_table"):
 
-    query_file = "select_one.sql"
+    query_file = "app/sql/select_one.sql"
 
     params = {"id": id}
     conn = sqlite3.connect(db)
@@ -43,9 +42,9 @@ def query_read_one_from_db(id=None, db="CV_Editor.db", table="basic_table"):
     return result
 
 
-def query_insert_db(params, db="CV_Editor.db", table="basic_table"):
+def query_insert_db(params, db="app/CV_Editor.db", table="basic_table"):
 
-    query_file = "insert_cv.sql"
+    query_file = "app/sql/insert_cv.sql"
 
     conn = sqlite3.connect(db)
     c = conn.cursor()
@@ -62,9 +61,9 @@ def query_insert_db(params, db="CV_Editor.db", table="basic_table"):
     return
 
 
-def query_update_db(id, cv_params, db="CV_Editor.db", table="basic_table"):
+def query_update_db(id, cv_params, db="app/CV_Editor.db", table="basic_table"):
 
-    query_file="update_cv.sql"
+    query_file= "app/sql/update_cv.sql"
 
     params = {
             'id': id,
@@ -93,9 +92,9 @@ def query_update_db(id, cv_params, db="CV_Editor.db", table="basic_table"):
     # return
 
 
-def query_remove_from_db(id=None, db="CV_Editor.db", table="basic_table"):
+def query_remove_from_db(id=None, db="app/CV_Editor.db", table="basic_table"):
 
-    query_file = "delete_one.sql"
+    query_file = "app/sql/delete_one.sql"
 
     params = {"id": id}
     conn = sqlite3.connect(db)

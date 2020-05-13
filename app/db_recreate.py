@@ -2,7 +2,7 @@
 
 import sqlite3
 
-conn = sqlite3.connect('CV_Editor.db')
+conn = sqlite3.connect('app/CV_Editor.db')
 c = conn.cursor()
 
 query = """

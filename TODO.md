@@ -3,7 +3,7 @@
 ##### 1. put zamiast post do edycji cv (DONE)
 ##### dodac baze do .gitignore (DONE)
 
-##### 2. layout/ uporzadkowanie plikow - sql do osobnego folderu, folder app - przy okazji sqlalchemy/ tutki flaskowe (flaskr)
+##### 2. layout/ uporzadkowanie plikow - sql do osobnego folderu, folder app - przy okazji sqlalchemy/ tutki flaskowe (flaskr) (DONE)
 ##### przejsc na sql alchemy, zaorac db_queries
 
 ##### 3. alembic - migracje, db_recreate - flask_alembic do ogarnięcia
