@@ -56,7 +56,7 @@ def api_cv_id(id=None):
         return "", 202
 
     elif request.method == "POST":
-        return f"PUT cv {id} not yet supported, use POST /api/cv to add or PUT /cv/<id> to update"
+        return f"POST cv {id} not supported, use POST /api/cv to add or PUT /api/cv/<id> to update"
 
     else:
         return f'{request.method} cv {id} not yet supported'
