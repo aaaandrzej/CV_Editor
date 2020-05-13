@@ -33,7 +33,7 @@ def api_cv_id(id=None):
     if request.method == "GET":
         return query_read_one_from_db(id)
 
-    elif request.method == "POST":
+    elif request.method == "PUT":
         json_data = request.get_json()
 
         # id = json_data["id"]
@@ -55,8 +55,8 @@ def api_cv_id(id=None):
         query_remove_from_db(id)
         return "", 202
 
-    elif request.method == "PUT":  # to chyba nie do końca ma sens, wywalić..?
-        return f"put cv {id} not yet supported"
+    elif request.method == "POST":
+        return f"PUT cv {id} not yet supported, use POST /api/cv to add or PUT /cv/<id> to update"
 
     else:
         return f'{request.method} cv {id} not yet supported'

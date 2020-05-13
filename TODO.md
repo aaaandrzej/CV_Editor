@@ -1,7 +1,7 @@
 10/04/2020
 
-##### 1. put zamiast post do edycji cv
-##### dodac baze do .gitignore
+##### 1. put zamiast post do edycji cv (DONE)
+##### dodac baze do .gitignore (DONE)
 
 ##### 2. layout/ uporzadkowanie plikow - sql do osobnego folderu, folder app - przy okazji sqlalchemy/ tutki flaskowe (flaskr)
 ##### przejsc na sql alchemy, zaorac db_queries
