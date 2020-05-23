@@ -19,11 +19,11 @@
 - aby uruchomić serwer aplikacji, po spełnieniu wymagań, należy uruchomić plik "main.py" znajdujący się w katalogu "/app"
 
 #### Struktura plików aplikacji:
-/app - katalog z plikami aplikacji, zawierający między innymi plik "main.py" służący do uruchomienia aplikacji
-/app/sql - pliki sql odpowiadające za komunikację z bazą danych
-/app/templates - pliki html odpowiedzialne za prezentowanie informacji w przeglądarce
-CV_Editor.db - domyślny plik bazy danych aplikacji
-db_recreate.py - skrypt tworzący (lub odtwarzający podstawową wersję) bazę danych
+/app - katalog z plikami aplikacji, zawierający między innymi plik "main.py" służący do uruchomienia aplikacji<br>
+/app/sql - pliki sql odpowiadające za komunikację z bazą danych<br>
+/app/templates - pliki html odpowiedzialne za prezentowanie informacji w przeglądarce<br>
+CV_Editor.db - domyślny plik bazy danych aplikacji<br>
+db_recreate.py - skrypt tworzący (lub odtwarzający podstawową wersję) bazę danych<br>
 
 #### Autor zezwala na dowolne korzystanie z aplikacji oraz wprowadzanie zmian we własnym zakresie, aczkolwiek nie ręczy za żadne skutki powyższych - każdy korzysta z niej na własną odpowiedzialność.
 
