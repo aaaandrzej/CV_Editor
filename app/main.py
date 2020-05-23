@@ -5,7 +5,7 @@ from db_queries import query_read_one_from_db
 from db_queries import query_insert_db
 from db_queries import query_remove_from_db
 from db_queries import query_update_db
-
+from config import api_on, admin_password
 
 app = Flask(__name__)
 
@@ -17,49 +17,51 @@ def index():
 
 # API
 
-@app.route('/api/cv', methods=['GET', 'POST'])
-def api_cv():
-    if request.method == "GET":
-        return json.dumps(query_read_db())
+if api_on:
 
-    elif request.method == "POST":
-        query_data = request.get_json()
-        query_insert_db(query_data)
-        return "", 201
+    @app.route('/api/cv', methods=['GET', 'POST'])
+    def api_cv():
+        if request.method == "GET":
+            return json.dumps(query_read_db())
+
+        elif request.method == "POST":
+            query_data = request.get_json()
+            query_insert_db(query_data)
+            return "", 201
 
 
-@app.route('/api/cv/<id>', methods=['GET', 'POST', 'PUT', 'DELETE'])
-def api_cv_id(id=None):
-    if request.method == "GET":
-        return query_read_one_from_db(id)
+    @app.route('/api/cv/<id>', methods=['GET', 'POST', 'PUT', 'DELETE'])
+    def api_cv_id(id=None):
+        if request.method == "GET":
+            return query_read_one_from_db(id)
 
-    elif request.method == "PUT":
-        json_data = request.get_json()
+        elif request.method == "PUT":
+            json_data = request.get_json()
 
-        # id = json_data["id"]
+            # id = json_data["id"]
 
-        query_data = {
-            'firstname': json_data["firstname"],
-            'lastname': json_data["lastname"],
-            'python': json_data["python"],
-            'javascript': json_data["javascript"],
-            'sql': json_data["sql"],
-            'english': json_data["english"],
-        }
+            query_data = {
+                'firstname': json_data["firstname"],
+                'lastname': json_data["lastname"],
+                'python': json_data["python"],
+                'javascript': json_data["javascript"],
+                'sql': json_data["sql"],
+                'english': json_data["english"],
+            }
 
-        query_update_db(id, query_data)
+            query_update_db(id, query_data)
 
-        return "", 202
+            return "", 202
 
-    elif request.method == "DELETE":
-        query_remove_from_db(id)
-        return "", 202
+        elif request.method == "DELETE":
+            query_remove_from_db(id)
+            return "", 202
 
-    elif request.method == "POST":
-        return f"POST cv {id} not supported, use POST /api/cv to add or PUT /cv/<id> to update"
+        elif request.method == "POST":
+            return f"POST cv {id} not supported, use POST /api/cv to add or PUT /cv/<id> to update"
 
-    else:
-        return f'{request.method} cv {id} not yet supported'
+        else:
+            return f'{request.method} cv {id} not yet supported'
 
 
 # HTML
