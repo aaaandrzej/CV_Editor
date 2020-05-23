@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, redirect, session
+from flask import Flask, request, render_template, redirect
 from auth import auth_bp, login_required
 # from db import get_connection
 
