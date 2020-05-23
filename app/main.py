@@ -1,13 +1,18 @@
-from flask import Flask, request, render_template, redirect
+from flask import Flask, request, render_template, redirect, session
+from auth import auth_bp, login_required
+# from db import get_connection
+
 import json
 from db_queries import query_read_db
 from db_queries import query_read_one_from_db
 from db_queries import query_insert_db
 from db_queries import query_remove_from_db
 from db_queries import query_update_db
-from config import api_on, admin_password
+from config import api_on
 
 app = Flask(__name__)
+app.secret_key = 'tajny-klucz-9523'
+app.register_blueprint(auth_bp)
 
 
 @app.route('/')
@@ -68,6 +73,7 @@ if api_on:
 
 @app.route('/cv', methods=['GET', 'POST'])
 @app.route('/cv/', methods=['GET', 'POST'])
+@login_required
 def cv():
     single_result = False
 
@@ -94,6 +100,7 @@ def cv():
 
 
 @app.route('/cv/<id>', methods=['GET', 'POST'])
+@login_required
 def cv_id(id=None):
 
     single_result = True
