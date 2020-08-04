@@ -1,11 +1,6 @@
 from werkzeug.security import generate_password_hash
 
+# until API is not secured by password this config file allows to turn off API and keep secured WWW app only
+
 # API ON/ OFF
-api_on = False
-
-# admin username and password
-admin_username = "admin"
-admin_password = "admin"
-
-#password hashing, do not edit:
-admin_password_hashed = generate_password_hash(admin_password)
+api_on = True

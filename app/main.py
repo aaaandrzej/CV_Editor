@@ -17,7 +17,7 @@ app.register_blueprint(auth_bp)
 
 @app.route('/')
 def index():
-    return "For API please use /api/cv or /api/cv/<id>, for HTML please use /cv or /cv<id>"
+    return "For API please use /api/cv or /api/cv/<id>, for HTML please use /cv or /cv<id>"  # TODO jak to zmusić do wyświetlania <id> w safari?
 
 
 # API
