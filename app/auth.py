@@ -4,8 +4,7 @@ from werkzeug.security import check_password_hash
 from flask import Blueprint, request, get_flashed_messages, render_template, \
     session, redirect, flash, url_for
 
-from config import admin_username, admin_password_hashed
-# from db import get_connection
+from db import get_connection
 
 auth_bp = Blueprint('auth_endpoints', __name__)
 
@@ -31,15 +30,13 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
-        # conn = get_connection()
-        # c = conn.cursor()
-        #
-        # result = c.execute('SELECT * FROM users WHERE username = ?', (username,))
-        # user_data = result.fetchone()
+        conn = get_connection()
+        c = conn.cursor()
 
-        user_data = {"id": 1, "username": admin_username, "password": admin_password_hashed}  # TODO przerobić to później na usera z DB
+        result = c.execute('SELECT * FROM login_table WHERE username = ?', (username,))
+        user_data = result.fetchone()
 
-        if username == admin_username:
+        if user_data:
             hashed_password = user_data['password']
 
             if check_password_hash(hashed_password, password):

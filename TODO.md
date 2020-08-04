@@ -1,3 +1,22 @@
+3/08/2020
+
+fix auth - dodać użytkownika admin i jego hasło do bazy
+
+przejść na sql alchemy, zaorać db_queries
+
+alembic - migracje, db_recreate - flask_alembic do ogarnięcia
+
+rozbudowanie bazy o kolejne tabele
+
+dokończenie wymaganych funkcjonalnosci
+
+kiedyś potem autentykacja - za każdym razem jak ktoś uderza w endpoint mamy weryfikować czy on to może zrobić - uderzyć do bazy, sprawdzić ciastko, jeśli nie ma, to przekierować do loginu - a login sprawdza w bazie i ustawia ciastko - to jest ładnie opisane w tutorialu do flaska
+
+testy - pytest
+
+
+<br><br>
+
 10/04/2020
 
 ##### 1. put zamiast post do edycji cv (DONE)
