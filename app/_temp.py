@@ -6,9 +6,11 @@ if __name__ == '__main__':
     session = get_session(echo=False)
 
     cv9 = session.query(Cv).get(9)
-    user = session.query(User).get(1)
+    # user = session.query(User).get(1)
+    user = session.query(User).filter(User.username == "admin").all()[0]
 
-    # print(user)
+
+    print(user.password)
 
     # session.delete(billy)
 
@@ -17,6 +19,6 @@ if __name__ == '__main__':
     # for instance in session.query(Cv).order_by(Cv.id):
     #     print(instance.python)
 
-    cv_list = [cv_instance for cv_instance in session.query(Cv)]
-
-    print(cv_list)
+    # cv_list = [cv_instance for cv_instance in session.query(Cv)]
+    #
+    # print(cv_list)
