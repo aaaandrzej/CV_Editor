@@ -34,7 +34,7 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
-        user_data = db_session.query(User).filter(User.username == username).all()[0]
+        user_data = db_session.query(User).get(1)  # TODO to trzeba potem przerobić na wszystkich userów
 
         if user_data:
             hashed_password = user_data.password
