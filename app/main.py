@@ -10,6 +10,11 @@ from db_queries import query_remove_from_db
 from db_queries import query_update_db
 from config import api_on
 
+from models import Cv, User
+from session import get_session
+
+session = get_session(echo=False)
+
 app = Flask(__name__)
 app.secret_key = 'tajny-klucz-9523'
 app.register_blueprint(auth_bp)
@@ -77,7 +82,9 @@ if api_on:
 def cv():
     single_result = False
 
-    all_db_records = query_read_db()
+    # all_db_records = query_read_db()
+
+    all_db_records = [cv_instance for cv_instance in session.query(Cv)]
 
     if request.method == "GET":
         pass

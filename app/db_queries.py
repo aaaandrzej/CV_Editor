@@ -112,8 +112,8 @@ def query_remove_from_db(id=None, db="CV_Editor.db", table="basic_table"):
 
 
 if __name__ == '__main__':
-    pass
-    # print(query_read_db())
+    # pass
+    print(query_read_db())
     # print(query_read_one_from_db(999))
     # query_insert_db("insert_cv.sql", {'firstname': 'Dummy', 'lastname': 'Dummer', 'python': 2, 'javascript': 0, 'sql': 1, 'english': 666})
     # print(query_remove_from_db("delete_one.sql", 5))

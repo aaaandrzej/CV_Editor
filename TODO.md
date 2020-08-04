@@ -1,6 +1,22 @@
+4/08/2020
+
+Sprint 2 (z confluence)
+
+Dodanie do projektu modułu SQAlchemy.
+
+Konfigurowanie połączenia z bazą danych i sesji.
+
+Stworzenie pythonowych modeli dla wszystkich tabel.
+
+Dodanie do projektu modułu do migracji schematu bazy danych (alembic).
+
+Implementacja endpointów.
+
+<br>
+
 3/08/2020
 
-fix auth - dodać użytkownika admin i jego hasło do bazy
+fix auth - dodać użytkownika admin i jego hasło do bazy (DONE)
 
 przejść na sql alchemy, zaorać db_queries
 
