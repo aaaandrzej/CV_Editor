@@ -1,4 +1,4 @@
 .idea
 venv
 *.db
-_temp.py
+*temp.py
