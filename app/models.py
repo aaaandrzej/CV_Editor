@@ -1,5 +1,5 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, inspect
 
 Base = declarative_base()
 
@@ -17,6 +17,9 @@ class Cv(Base):
 
     def __repr__(self):
         return f"{self.firstname} {self.lastname}"
+
+    def object_as_dict(self):
+        return {c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs}
 
 
 class User(Base):

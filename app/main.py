@@ -32,11 +32,18 @@ if api_on:
     @app.route('/api/cv', methods=['GET', 'POST'])
     def api_cv():
         if request.method == "GET":
-            return json.dumps(query_read_db())
+
+            all_db_records = [cv_instance.object_as_dict() for cv_instance in session.query(Cv)]
+
+            return json.dumps(all_db_records)
 
         elif request.method == "POST":
+
             query_data = request.get_json()
-            query_insert_db(query_data)
+
+            session.add(Cv(**query_data))
+            session.commit()
+
             return "", 201
 
 
