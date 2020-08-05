@@ -1,4 +1,5 @@
 .idea
 venv
 *.db
+*.sqlite
 _temp.*
