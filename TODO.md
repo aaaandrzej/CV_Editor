@@ -1,16 +1,16 @@
-4/08/2020
+##### 4/08/2020
 
-Sprint 2 (z confluence)
+###### Sprint 2 (z confluence)
 
-Dodanie do projektu modułu SQAlchemy.
+Dodanie do projektu modułu SQAlchemy. (done)
 
-Konfigurowanie połączenia z bazą danych i sesji.
+Konfigurowanie połączenia z bazą danych i sesji. (done)
 
-Stworzenie pythonowych modeli dla wszystkich tabel.
+Stworzenie pythonowych modeli dla wszystkich tabel. (done)
 
-Dodanie do projektu modułu do migracji schematu bazy danych (alembic).
+##### Dodanie do projektu modułu do migracji schematu bazy danych (alembic).
 
-Implementacja endpointów.
+##### Implementacja endpointów.
 
 <br>
 
@@ -18,7 +18,7 @@ Implementacja endpointów.
 
 fix auth - dodać użytkownika admin i jego hasło do bazy (DONE)
 
-przejść na sql alchemy, zaorać db_queries
+przejść na sql alchemy, zaorać db_queries (DONE)
 
 alembic - migracje, db_recreate - flask_alembic do ogarnięcia
 

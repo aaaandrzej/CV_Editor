@@ -30,6 +30,7 @@ def index():
 if api_on:
 
     @app.route('/api/cv', methods=['GET', 'POST'])
+    @app.route('/api/cv/', methods=['GET', 'POST'])
     def api_cv():
         if request.method == "GET":
 
@@ -50,28 +51,33 @@ if api_on:
     @app.route('/api/cv/<id>', methods=['GET', 'POST', 'PUT', 'DELETE'])
     def api_cv_id(id=None):
         if request.method == "GET":
-            return query_read_one_from_db(id)
+
+            one_db_record = session.query(Cv).get(id).object_as_dict()
+
+            return json.dumps(one_db_record)
 
         elif request.method == "PUT":
             json_data = request.get_json()
 
-            # id = json_data["id"]
+            cv_being_updated = session.query(Cv).get(id)
 
-            query_data = {
-                'firstname': json_data["firstname"],
-                'lastname': json_data["lastname"],
-                'python': json_data["python"],
-                'javascript': json_data["javascript"],
-                'sql': json_data["sql"],
-                'english': json_data["english"],
-            }
+            cv_being_updated.firstname = json_data["firstname"]  # TODO uprościć... jakoś z **json_data ?
+            cv_being_updated.lastname = json_data["lastname"]
+            cv_being_updated.python = json_data["python"]
+            cv_being_updated.javascript = json_data["javascript"]
+            cv_being_updated.sql = json_data["sql"]
+            cv_being_updated.english = json_data["english"]
 
-            query_update_db(id, query_data)
+            session.commit()
 
             return "", 202
 
         elif request.method == "DELETE":
-            query_remove_from_db(id)
+
+            cv_to_be_deleted = session.query(Cv).get(id)
+            session.delete(cv_to_be_deleted)
+            session.commit()
+
             return "", 202
 
         elif request.method == "POST":
