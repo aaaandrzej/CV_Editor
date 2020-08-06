@@ -7,7 +7,7 @@ def _fk_pragma_on_connect(dbapi_con, con_record):
 
 
 def get_session(echo=False):
-    engine = create_engine('sqlite:///CV_Editor.db', echo=echo)
+    engine = create_engine('sqlite:///CV_Editor.sqlite', echo=echo)
     DBSession = sessionmaker(bind=engine)
 
     event.listen(engine, 'connect', _fk_pragma_on_connect)
