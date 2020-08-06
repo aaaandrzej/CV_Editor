@@ -1,34 +1,19 @@
-##### 4/08/2020
 
-###### Sprint 2 (z confluence)
-
-Dodanie do projektu modułu SQAlchemy. (done)
-
-Konfigurowanie połączenia z bazą danych i sesji. (done)
-
-Stworzenie pythonowych modeli dla wszystkich tabel. (done)
-
-##### Dodanie do projektu modułu do migracji schematu bazy danych (alembic).
-
-##### Implementacja endpointów.
-
-<br>
-
-3/08/2020
+6/08/2020
 
 fix auth - dodać użytkownika admin i jego hasło do bazy (DONE)
 
 przejść na sql alchemy, zaorać db_queries (DONE)
 
-alembic - migracje, db_recreate - flask_alembic do ogarnięcia
+alembic - migracje, db_recreate - flask_alembic do ogarnięcia (DONE)
 
-rozbudowanie bazy o kolejne tabele
+##### rozbudowanie bazy o kolejne tabele
 
-dokończenie wymaganych funkcjonalnosci
+##### dokończenie wymaganych funkcjonalnosci
 
-kiedyś potem autentykacja - za każdym razem jak ktoś uderza w endpoint mamy weryfikować czy on to może zrobić - uderzyć do bazy, sprawdzić ciastko, jeśli nie ma, to przekierować do loginu - a login sprawdza w bazie i ustawia ciastko - to jest ładnie opisane w tutorialu do flaska
+##### kiedyś potem autentykacja - za każdym razem jak ktoś uderza w endpoint mamy weryfikować czy on to może zrobić - uderzyć do bazy, sprawdzić ciastko, jeśli nie ma, to przekierować do loginu - a login sprawdza w bazie i ustawia ciastko - to jest ładnie opisane w tutorialu do flaska
 
-testy - pytest
+##### testy - pytest
 
 
 <br><br>
