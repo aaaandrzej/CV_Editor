@@ -4,7 +4,11 @@ from werkzeug.security import check_password_hash
 from flask import Blueprint, request, get_flashed_messages, render_template, \
     session, redirect, flash, url_for
 
-from db import get_connection
+from models import User
+from session import get_session
+
+db_session = get_session(echo=False)
+
 
 auth_bp = Blueprint('auth_endpoints', __name__)
 
@@ -30,18 +34,14 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
-        conn = get_connection()
-        c = conn.cursor()
-
-        result = c.execute('SELECT * FROM login_table WHERE username = ?', (username,))
-        user_data = result.fetchone()
+        user_data = db_session.query(User).get(1)  # TODO to trzeba potem przerobić na wszystkich userów
 
         if user_data:
-            hashed_password = user_data['password']
+            hashed_password = user_data.password
 
             if check_password_hash(hashed_password, password):
-                session['user_id'] = user_data['id']
-                session['username'] = user_data['username']
+                session['user_id'] = user_data.id
+                session['username'] = user_data.username
                 return redirect(url_for('cv'))
 
         flash('błędna nazwa użytkownika lub hasło')
