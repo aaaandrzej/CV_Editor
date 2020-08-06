@@ -18,7 +18,8 @@ depends_on = None
 
 def upgrade():
     query = """
-    INSERT INTO basic_table VALUES(9,'Błażej','Od roweru',7,0,1,20), 
+    INSERT INTO basic_table VALUES(1,'Pan','Admin',0,0,0,0), 
+                                  (9,'Błażej','Od roweru',7,0,1,20),
                                   (10,'Dummy','Dummer',2,0,1,6666666),
                                   (12,'King','Schultz',7,1,2,500),
                                   (13,'Dummmmy','Dummmer',7,5,4,3),
@@ -62,7 +63,44 @@ def upgrade():
 
 def downgrade():
     query = """
-        DELETE FROM main."basic_table"
-        """
+        DELETE FROM "basic_table" WHERE "id" = 1 OR
+                                        "id" = 9 OR
+                                        "id" = 10 OR
+                                        "id" = 12 OR
+                                        "id" = 13 OR
+                                        "id" = 14 OR
+                                        "id" = 15 OR
+                                        "id" = 16 OR
+                                        "id" = 17 OR
+                                        "id" = 18 OR
+                                        "id" = 994 OR
+                                        "id" = 995 OR
+                                        "id" = 996 OR
+                                        "id" = 997 OR
+                                        "id" = 999 OR
+                                        "id" = 1000 OR
+                                        "id" = 1001 OR
+                                        "id" = 1002 OR
+                                        "id" = 1003 OR
+                                        "id" = 1004 OR
+                                        "id" = 1005 OR
+                                        "id" = 1006 OR
+                                        "id" = 1007 OR
+                                        "id" = 1008 OR
+                                        "id" = 1009 OR
+                                        "id" = 1010 OR
+                                        "id" = 1011 OR
+                                        "id" = 1012 OR
+                                        "id" = 1013 OR
+                                        "id" = 1014 OR
+                                        "id" = 1015 OR
+                                        "id" = 1016 OR
+                                        "id" = 1017 OR
+                                        "id" = 1018 OR
+                                        "id" = 1019 OR
+                                        "id" = 1020 OR
+                                        "id" = 1021 OR
+                                        "id" = 1023;
+    """
 
     op.execute(query)
