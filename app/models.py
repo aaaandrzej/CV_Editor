@@ -11,15 +11,15 @@ Base = declarative_base()
 class User(Base):
     __tablename__ = 'user'
     id = Column(Integer, primary_key=True)
-    name = Column(String(64))
+    name = Column(String)
 
     # the same 'user_keywords'->'keyword' proxy as in
     # the basic dictionary example
     skills = association_proxy(
                 'user_skills',
-                'skill_name',
+                'skill_level',
                 creator=lambda k, v:
-                            UserSkill(skill_level=k, skill_name=v)
+                            UserSkill(skill_name=k, skill_level=v)
                 )
 
     def __init__(self, name):
@@ -31,7 +31,7 @@ class UserSkill(Base):
     user_id = Column(Integer, ForeignKey('user.id'), primary_key=True)
     skill_id = Column(Integer, ForeignKey('skill.id'),
                                                     primary_key=True)
-    skill_level = Column(String)
+    skill_level = Column(Integer)
     user = relationship(User, backref=backref(
             "user_skills",
             collection_class=attribute_mapped_collection("skill_level"),
@@ -51,7 +51,7 @@ class UserSkill(Base):
 class Skill(Base):
     __tablename__ = 'skill'
     id = Column(Integer, primary_key=True)
-    skill_name = Column(String(64))
+    skill_name = Column(String)
 
     def __init__(self, skill_name):
         self.skill_name = skill_name
