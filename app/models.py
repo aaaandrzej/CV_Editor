@@ -1,92 +1,57 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Table, inspect
+from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy.orm import relationship, backref
+
+from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm.collections import attribute_mapped_collection
 
 Base = declarative_base()
 
 
-association_table = Table(
-    'skills_to_users',
-    Base.metadata,
-    Column('user_id', Integer, ForeignKey('users.id')),
-    Column('skill_id', Integer, ForeignKey('skills.id')),
-    Column('skill_level', Integer, nullable=False)
-)
-
-
 class User(Base):
-    __tablename__ = 'users'
-
+    __tablename__ = 'user'
     id = Column(Integer, primary_key=True)
-    username = Column(String(), nullable=False)
-    password = Column(String(), nullable=False)
-    firstname = Column(String(), nullable=False)
-    lastname = Column(String(), nullable=False)
+    name = Column(String(64))
 
-    skills = relationship(
-        'Skill',
-        secondary=association_table,
-        back_populates='users')
+    # the same 'user_keywords'->'keyword' proxy as in
+    # the basic dictionary example
+    skills = association_proxy(
+                'user_skills',
+                'skill_name',
+                creator=lambda k, v:
+                            UserSkill(skill_level=k, skill_name=v)
+                )
 
-    def __repr__(self):
-        return f"{self.firstname} {self.lastname}"
+    def __init__(self, name):
+        self.name = name
+
+
+class UserSkill(Base):
+    __tablename__ = 'user_skill'
+    user_id = Column(Integer, ForeignKey('user.id'), primary_key=True)
+    skill_id = Column(Integer, ForeignKey('skill.id'),
+                                                    primary_key=True)
+    skill_level = Column(String)
+    user = relationship(User, backref=backref(
+            "user_skills",
+            collection_class=attribute_mapped_collection("skill_level"),
+            cascade="all, delete-orphan"
+            )
+        )
+
+    # the relationship to Keyword is now called
+    # 'kw'
+    sk = relationship("Skill")
+
+    # 'keyword' is changed to be a proxy to the
+    # 'keyword' attribute of 'Keyword'
+    skill_name = association_proxy('sk', 'skill_name')
 
 
 class Skill(Base):
-    __tablename__ = 'skills'
-
+    __tablename__ = 'skill'
     id = Column(Integer, primary_key=True)
-    skill_name = Column(String(), nullable=False)
+    skill_name = Column(String(64))
 
-    # skill_level = relationship(
-    #     'SkillLevel',
-    #     secondary=association_table,
-    #     back_populates='skills'
-    # )
-
-    users = relationship(
-        'User',
-        secondary=association_table,
-        back_populates='skills'
-    )
-
-    def __repr__(self):
-        return f"{self.skill_name}"
-
-
-# class SkillLevel(Base):  # chciałem tej klasy uniknąć ale nie umiałem połączyć usera ze skill_level inaczej
-#     __tablename__ = 'skills_to_users'
-#
-#     user_id = Column(Integer)
-#     skill_id = Column(Integer)
-#     skill_level = Column(Integer, nullable=False)
-#
-#     skills = relationship(
-#         'Skill',
-#         secondary=association_table,
-#         back_populates='skills_to_users'
-#     )
-#
-#     def __repr__(self):
-#         return f"{self.skill_id} {self.skill_level}"
-
-
-"""
-class Cv(Base):
-    __tablename__ = 'basic_table'
-
-    id = Column(Integer, primary_key=True)
-    firstname = Column(String(), nullable=False)
-    lastname = Column(String(), nullable=False)
-    python = Column(Integer())
-    javascript = Column(Integer())
-    sql = Column(Integer())
-    english = Column(Integer())
-
-    def __repr__(self):
-        return f"{self.firstname} {self.lastname}"
-
-    def object_as_dict(self):
-        return {c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs}
-"""
-
+    def __init__(self, skill_name):
+        self.skill_name = skill_name
