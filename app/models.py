@@ -13,8 +13,6 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String)
 
-    # the same 'user_keywords'->'keyword' proxy as in
-    # the basic dictionary example
     skills = association_proxy(
                 'user_skills',
                 'skill_level',
@@ -34,17 +32,13 @@ class UserSkill(Base):
     skill_level = Column(Integer)
     user = relationship(User, backref=backref(
             "user_skills",
-            collection_class=attribute_mapped_collection("skill_level"),
+            collection_class=attribute_mapped_collection("skill_name"),
             cascade="all, delete-orphan"
             )
         )
 
-    # the relationship to Keyword is now called
-    # 'kw'
     sk = relationship("Skill")
 
-    # 'keyword' is changed to be a proxy to the
-    # 'keyword' attribute of 'Keyword'
     skill_name = association_proxy('sk', 'skill_name')
 
 
