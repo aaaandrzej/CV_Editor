@@ -12,13 +12,13 @@ class SkillUser(Base):
     skill_id = Column(Integer, ForeignKey('skill.id'), primary_key=True)
     skill_level = Column(Integer())
 
-    skill = relationship("SkillName", back_populates="users")  # czy skills? czy user?
+    skill = relationship("SkillName", back_populates="users")
     user = relationship("User", back_populates="skills")
 
-    # skill_name = relationship("SkillName", back_populates="skill_name")
+    # skill_name = relationship("SkillName", back_populates="skill_name")  # TODO nie umiem tego zmusic do dzialania
 
     def __repr__(self):
-        return f"{self.skill.skill_name} {self.skill_level}"
+        return f"{self.skill.skill_name} {self.skill_level}"  # TODO mogę tak??
 
 
 class User(Base):
@@ -30,6 +30,7 @@ class User(Base):
     lastname = Column(String)  # nullable=False)
 
     skills = relationship("SkillUser", back_populates="user")
+    experience = relationship("Experience", back_populates="user")
 
     def __repr__(self):
         return f"{self.firstname} {self.lastname}"
@@ -38,9 +39,24 @@ class User(Base):
 class SkillName(Base):
     __tablename__ = 'skill'
     id = Column(Integer, primary_key=True)
-    skill_name = Column(String(), nullable=False)  # , unique=True)
+    skill_name = Column(String(), nullable=False, unique=True)
 
-    users = relationship("SkillUser", back_populates="skill")  # czy skills? czy user?
+    users = relationship("SkillUser", back_populates="skill")
 
     def __repr__(self):
         return f"{self.skill_name}"
+
+
+class Experience(Base):
+    __tablename__ = 'experience'
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('user.id'))
+    company = Column(String)  # nullable=False)
+    project = Column(String)  # nullable=False)
+    duration = Column(Integer)   # nullable=False)
+
+    user = relationship("User", back_populates="experience")
+
+    def __repr__(self):
+        return f"{self.company} {self.project} {self.duration}"
