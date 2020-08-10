@@ -1,24 +1,24 @@
-# from models import User, Skill, SkillUser
-from models import Child, Parent, Association
+from models import User, Skill, SkillUser
+# from models import Child, Parent, Association
 from session import get_session
 
 session = get_session(echo=False)
 
 
 # create parent, append a child via association
-p = Parent()
-a = Association(extra_data="some data")
-a.child = Child()
-p.children.append(a)
+u = User()
+su = SkillUser(extra_data="some data")
+su.skill = Skill()
+u.skills.append(su)
 
 # iterate through child objects via association, including association
 # attributes
-for assoc in p.children:
-    print(assoc.extra_data)
-    print(assoc.child)
+for sku in u.skills:
+    print(sku.extra_data)
+    print(sku.skill)
 
-
-
+session.add(u)
+session.commit()
 
 
 
