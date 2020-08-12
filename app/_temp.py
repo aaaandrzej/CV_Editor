@@ -44,10 +44,15 @@ piotr = session.query(User).get(2)
 # piotr.skills.append(sql_piotra)
 
 
-st_piotra = Experience()
-st_piotra.company = "Secure Trading"
+# st_piotra = Experience()
+# st_piotra.company = "Secure Trading"
 
 # andrzej.experience.append(st_piotra)
+
+for exp in piotr.experience:
+    exp.project = "Server"
+    exp.duration = 2
+    print(exp)
 
 
 for skl in piotr.skills:

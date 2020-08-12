@@ -1,10 +1,10 @@
 from flask import Flask, request, render_template, redirect
 from auth import auth_bp, login_required
 
-from models import User, SkillUser, SkillName, Experience
-from session import get_session
-
 import json
+
+from models import Cv
+from session import get_session
 
 session = get_session(echo=False)
 
@@ -22,7 +22,7 @@ def index():
 @app.route('/api/cv/', methods=['GET'])  # TODO czy tak się robi? czy w <id> też dorobić / po adresie?
 def api_cv_get():
 
-    all_db_records = [user.object_as_dict() for user in session.query(User)]
+    all_db_records = [cv_instance.object_as_dict() for cv_instance in session.query(Cv)]
 
     return json.dumps(all_db_records)
 
