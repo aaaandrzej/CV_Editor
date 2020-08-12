@@ -19,9 +19,12 @@ class SkillUser(Base):
     def object_as_dict(self):
         # return {self.skill.skill_name : self.skill_level}
         return {
-                    "skill_name": self.skill.skill_name,
-                    "skill_level": self.skill_level
-                }
+            # "skill":
+            # {
+                "skill_name": self.skill.skill_name,
+                "skill_level": self.skill_level
+            }
+        # }
 
     def __repr__(self):
         return f"{self.object_as_dict()}"
@@ -39,29 +42,18 @@ class User(Base):
     experience = relationship("Experience", back_populates="user")
 
     def __repr__(self):
-        return f"{self.object_as_dict()}"
+        return f"{self.object_as_dict_string()}"
 
     # def object_as_dict(self):
     #     return {c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs}
 
-    def object_as_dict(self):
-        return {
+    def object_as_dict_string(self):
+        return str({
             "firstname": self.firstname,
             "lastname": self.lastname,
-            # "skills":
-            # "skills": {
-            #     "xxx"
-            #
-            #
-            # },
-            "skills": {skill for skill in self.skills},
-            # "skills": type({skill for skill in self.skills}),
-            # "skills": {"skill:":skill for skill in self.skills},
-            "exprience": {exp for exp in self.experience}
-            # "exprience": type({exp for exp in self.experience})
-            # "experience": {"experience":exp for exp in self.experience}
-
-        }
+            "skills": [skill for skill in self.skills],
+            "exprience": [exp for exp in self.experience]
+        })
 
 
 class SkillName(Base):
@@ -90,18 +82,11 @@ class Experience(Base):
         return f"{self.object_as_dict()}"
 
     def object_as_dict(self):
-        # return {
-        #     self.company:
-        #     {self.project : self.duration}
-        # }
-
         return {
-            "project_details":
-                {
+            # "project_details":
+            #     {
                     "company": self.company,
                     "project": self.project,
                     "duration": self.duration
                 }
-            }
-
-
+        # }
