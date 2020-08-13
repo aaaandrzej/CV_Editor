@@ -109,11 +109,34 @@ andrzej = session.query(User).filter_by(username='andrzej').first()
 piotr = session.query(User).get(2)
 jacek = session.query(User).get(3)
 
+
+# print(andrzej.skills)
+
+skill = {'skill_name': 'pyt1111hon', 'skill_level': 5}
+
+
+# from main import api_cv_post
+
+# print(add_skill_name(skill))
+#
+# try:
+#     session.add(skill_obj)
+# except Exception as ex:
+#     print(ex)
+    # print("z bazy: ", end="")
+    # print(skill_db_existing)
+
+print()
+print()
+
+
+
+
 # print(jacek)
 #
-users = session.query(User).all()
-
-print(json.dumps([user.object_as_dict_string() for user in users]))
+# users = session.query(User).all()
+#
+# print(json.dumps([user.object_as_dict_string() for user in users]))
 # print(piotr)
 # print(type(andrzej.object_as_dict()))
 # andrzej_repr_str = str(andrzej.object_as_dict())

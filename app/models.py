@@ -52,7 +52,7 @@ class User(Base):
             "firstname": self.firstname,
             "lastname": self.lastname,
             "skills": [skill for skill in self.skills],
-            "exprience": [exp for exp in self.experience]
+            "experience": [exp for exp in self.experience]
         })
 
 
