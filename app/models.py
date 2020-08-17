@@ -42,18 +42,18 @@ class User(Base):
     experience = relationship("Experience", back_populates="user")
 
     def __repr__(self):
-        return f"{self.object_as_dict_string()}"
+        return f"{self.object_as_dict()}"
 
     # def object_as_dict(self):
     #     return {c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs}
 
-    def object_as_dict_string(self):
-        return str({
+    def object_as_dict(self):
+        return {
             "firstname": self.firstname,
             "lastname": self.lastname,
-            "skills": [skill for skill in self.skills],
-            "experience": [exp for exp in self.experience]
-        })
+            "skills": [skill.object_as_dict() for skill in self.skills],
+            "experience": [exp.object_as_dict() for exp in self.experience]
+        }
 
 
 class SkillName(Base):

@@ -9,8 +9,8 @@ import json
 session = get_session(echo=False)
 
 app = Flask(__name__)
-app.secret_key = 'tajny-klucz-9523'
-app.register_blueprint(auth_bp)
+# app.secret_key = 'tajny-klucz-9523'
+# app.register_blueprint(auth_bp)
 
 
 @app.route('/')
@@ -19,12 +19,12 @@ def index():
 
 
 @app.route('/api/cv', methods=['GET'])
-@app.route('/api/cv/', methods=['GET'])  # TODO czy tak się robi? czy w <id> też dorobić / po adresie?
+@app.route('/api/cv/', methods=['GET'])
 def api_cv_get():
 
-    all_db_records = [user.object_as_dict_string() for user in session.query(User)]
+    all_db_records = [user.object_as_dict() for user in session.query(User)]
 
-    return json.dumps(all_db_records)
+    return json.dumps(all_db_records)  # TODO czy da się bez json.dumps ??
 
 
 @app.route('/api/cv', methods=['POST'])
@@ -35,8 +35,13 @@ def api_cv_post():
 
     json_data = request.get_json()
 
-    #create new_cv object and map basic user data from json:
+    # create new_cv object and map basic user data from json:
     new_cv = User()
+
+    # session.add(new_cv)
+    # session.commit()
+    #
+    # new_cv = session.query(User).order_by(User.id.desc()).first()
 
     if "username" in json_data:
         new_cv.username = json_data["username"]
@@ -60,19 +65,19 @@ def api_cv_post():
             session.commit()
             return skill_obj
 
-    # TODO ponizej jest blad
+    # TODO ponizej jest blad ?
 
-    # if "skills" in json_data and len(json_data["skills"]) > 0:  # if skills:
-    #     for skill in json_data["skills"]:
-    #         skill_name_unique = add_skill_name(skill)
-    #         skill_name_object = SkillName()
-    #         skill_name_object.skill_name = skill_name_unique
-    #         skill_object = SkillUser()
-    #         skill_object.skill = skill_name_object
-    #         skill_object.skill_level = skill["skill_level"]
-    #         print(skill_object)
-    #
-    #         new_cv.skills.append(skill_object)
+    if "skills" in json_data and len(json_data["skills"]) > 0:  # if skills:
+        for skill in json_data["skills"]:
+            skill_name_unique = add_skill_name(skill)
+            skill_name_object = SkillName()
+            skill_name_object.skill_name = skill_name_unique
+            skill_object = SkillUser()
+            skill_object.skill = skill_name_object
+            skill_object.skill_level = skill["skill_level"]
+            print(skill_object)
+
+            new_cv.skills.append(skill_object)
 
     # add experience from json to new_cv object, if experience was provided:
 
@@ -101,7 +106,7 @@ def api_cv_id_get(id=None):
     one_db_record = session.query(User).get(id)
 
     try:
-        response = json.dumps(one_db_record.object_as_dict_string())
+        response = json.dumps(one_db_record.object_as_dict())
         return response
 
     except AttributeError:

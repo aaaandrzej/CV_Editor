@@ -103,16 +103,16 @@ data = {
 # data_s = json.dumps(data)
 # print(data_s)
 
-users = session.query(User).all()
-
-andrzej = session.query(User).filter_by(username='andrzej').first()
-piotr = session.query(User).get(2)
-jacek = session.query(User).get(3)
+# users = session.query(User).all()
+#
+# andrzej = session.query(User).filter_by(username='andrzej').first()
+# piotr = session.query(User).get(2)
+# jacek = session.query(User).get(3)
 
 
 # print(andrzej.skills)
 
-skill = {'skill_name': 'pyt1111hon', 'skill_level': 5}
+# skill = {'skill_name': 'pyt1111hon', 'skill_level': 5}
 
 
 # from main import api_cv_post
@@ -126,9 +126,17 @@ skill = {'skill_name': 'pyt1111hon', 'skill_level': 5}
     # print("z bazy: ", end="")
     # print(skill_db_existing)
 
-print()
-print()
+# print()
+# print()
 
+
+new_cv = User()
+new_cv.firstname = "DFSFSFS"
+session.add(new_cv)
+session.commit()
+
+new_cv = session.query(User).order_by(User.id.desc()).first()
+print(new_cv)
 
 
 
