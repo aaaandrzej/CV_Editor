@@ -38,11 +38,6 @@ def api_cv_post():
     # create new_cv object and map basic user data from json:
     new_cv = User()
 
-    # session.add(new_cv)
-    # session.commit()
-    #
-    # new_cv = session.query(User).order_by(User.id.desc()).first()
-
     if "username" in json_data:
         new_cv.username = json_data["username"]
     if "password" in json_data:
@@ -52,50 +47,33 @@ def api_cv_post():
     new_cv.lastname = json_data["lastname"]
 
     # add skills from json to new_cv object, if skills were provided:
-
-    def add_skill_name(skill_dict):  # TODO docelowo wynieść poza main.py
-
-        skill_obj = session.query(SkillName).filter_by(skill_name=skill_dict["skill_name"]).first()
-
-        if skill_obj:
-            return skill_obj
-        else:
-            skill_obj = SkillName(skill_name=skill_dict["skill_name"])
-            session.add(skill_obj)
-            session.commit()
-            return skill_obj
-
-    # TODO ponizej jest blad ?
-
     if "skills" in json_data and len(json_data["skills"]) > 0:  # if skills:
         for skill in json_data["skills"]:
-            skill_name_unique = add_skill_name(skill)
-            skill_name_object = SkillName()
-            skill_name_object.skill_name = skill_name_unique
+            # check if skill_name already exists
+            skill_name_obj = session.query(SkillName).filter_by(skill_name=skill["skill_name"]).first()
+
+            if not skill_name_obj:
+                skill_name_obj = SkillName(skill_name=skill["skill_name"])
+                session.add(skill_name_obj)
+
             skill_object = SkillUser()
-            skill_object.skill = skill_name_object
+            skill_object.skill = skill_name_obj
             skill_object.skill_level = skill["skill_level"]
-            print(skill_object)
 
             new_cv.skills.append(skill_object)
 
     # add experience from json to new_cv object, if experience was provided:
-
     if "experience" in json_data and len(json_data["experience"]) > 0:  # if experience:
         for exp in json_data["experience"]:
             exp_object = Experience()
             exp_object.company = exp["company"]
             exp_object.project = exp["project"]
             exp_object.duration = exp["duration"]
-            print(exp_object)
 
             new_cv.experience.append(exp_object)
 
-
-    print(new_cv)
-
     session.add(new_cv)
-    session.commit()  # TODO dlaczego to nie działa?? na pewno przez skills
+    session.commit()
 
     return "", 201
 
