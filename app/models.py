@@ -38,8 +38,8 @@ class User(Base):
     firstname = Column(String)  # nullable=False)
     lastname = Column(String)  # nullable=False)
 
-    skills = relationship("SkillUser", back_populates="user")
-    experience = relationship("Experience", back_populates="user")
+    skills = relationship("SkillUser", back_populates="user", cascade="all, delete-orphan")
+    experience = relationship("Experience", back_populates="user", cascade="all, delete-orphan")
 
     def __repr__(self):
         return f"{self.object_as_dict()}"

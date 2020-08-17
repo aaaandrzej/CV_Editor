@@ -1,6 +1,8 @@
 from flask import Flask, request, render_template, redirect
 from auth import auth_bp, login_required
 
+from sqlalchemy.orm.exc import UnmappedInstanceError
+
 from models import User, SkillUser, SkillName, Experience
 from session import get_session
 
@@ -24,7 +26,7 @@ def api_cv_get():
 
     all_db_records = [user.object_as_dict() for user in session.query(User)]
 
-    return json.dumps(all_db_records)  # TODO czy da się bez json.dumps ??
+    return json.dumps(all_db_records)  # TODO halo Piotr, czy da się bez json.dumps - zgodnie z uwaga z PR?
 
 
 @app.route('/api/cv', methods=['POST'])
@@ -52,7 +54,7 @@ def api_cv_post():
             # check if skill_name already exists
             skill_name_obj = session.query(SkillName).filter_by(skill_name=skill["skill_name"]).first()
 
-            if not skill_name_obj:
+            if not skill_name_obj:  # TODO to byla wczesniej osobna funkcja ale sqlite nie obsluguje kilku watkow bazy, i musi byc if tutaj
                 skill_name_obj = SkillName(skill_name=skill["skill_name"])
                 session.add(skill_name_obj)
 
@@ -116,11 +118,17 @@ def api_cv_id_put(id=None):
 @app.route('/api/cv/<id>', methods=['DELETE'])
 def api_cv_id_delete(id=None):
 
-    # cv_to_be_deleted = session.query(Cv).get(id)
-    # session.delete(cv_to_be_deleted)
-    # session.commit()
+    cv_to_be_deleted = session.query(User).get(id)
+    print(cv_to_be_deleted)
 
-    return "", 202
+    try:
+        session.delete(cv_to_be_deleted)
+        session.commit()
+
+        return "", 202
+
+    except UnmappedInstanceError as ex:  # TODO zamienić Exceptions na poprawny błąd - Class 'builtins.NoneType' is not mapped
+        return "", 404
 
 
 if __name__ == '__main__':
