@@ -29,7 +29,7 @@ def api_cv_get():
     return json.dumps(all_db_records)  # TODO halo Piotr, czy da się bez json.dumps - zgodnie z uwaga z PR?
 
 
-@app.route('/api/cv', methods=['POST'])
+@app.route('/api/cv', methods=['POST'])  # TODO to nie dziala z /cv (/cv/ jest OK)
 @app.route('/api/cv/', methods=['POST'])
 def api_cv_post():
 
@@ -51,6 +51,9 @@ def api_cv_post():
     # add skills from json to new_cv object, if skills were provided:
     if "skills" in json_data and len(json_data["skills"]) > 0:  # if skills:
         for skill in json_data["skills"]:
+            # TODO to wyzej zamienic na:
+            # for skill in json_data.get('skills', []):
+
             # check if skill_name already exists
             skill_name_obj = session.query(SkillName).filter_by(skill_name=skill["skill_name"]).first()
 
@@ -95,31 +98,83 @@ def api_cv_id_get(id=None):
 
 @app.route('/api/cv/<id>', methods=['PUT'])
 def api_cv_id_put(id=None):
-    # json_data = request.get_json()
-    #
-    # cv_being_updated = session.query(Cv).get(id)
-    #
-    # cv_being_updated.firstname = json_data["firstname"]
-    # cv_being_updated.lastname = json_data["lastname"]
-    # cv_being_updated.python = json_data["python"]
-    # cv_being_updated.javascript = json_data["javascript"]
-    # cv_being_updated.sql = json_data["sql"]
-    # cv_being_updated.english = json_data["english"]
-    #
-    # # TODO od PD - uprościć update objektu tak o:
-    # # for key, value in json_data.items():
-    # #     setattr(cv_being_updated, key, value)
-    #
+
+    # ADD NEW CV BASED ON JSON DATA
+
+    json_data = request.get_json()
+
+    cv_being_updated = session.query(User).get(id)
+
+    if cv_being_updated is None:
+        return "", 404
+
+    print(cv_being_updated)
+
+    # update basic user's attributes:
+    for key, value in json_data.items():
+        if key not in ["skills", "experience"]:
+            setattr(cv_being_updated, key, value)
+
+    print("update to:")
+    print(cv_being_updated)
+    # print(cv_being_updated.skills)
+    print()
+
+    # add skills from json to new_cv object, if skills were provided:
+    for skill in json_data.get('skills', []):
+        # skill_name_obj = SkillName(skill_name=skill["skill_name"])
+        # skill_obj = SkillUser()
+        # skill_obj.skill = skill_name_obj
+        # skill_obj.skill_level = skill["skill_level"]
+
+        skills_list_from_db = [skill.object_as_dict() for skill in cv_being_updated.skills]
+        # print(skills_list_from_db)
+        # print(type(skills_list_from_db))
+        # print()
+
+        if skill not in skills_list_from_db:   # TODO WHYYYY!!!????
+        # if skill_obj not in cv_being_updated.skills:   # TODO WHYYYY!!!????
+        #     print(skill_obj)
+            print(type(skill))
+            print(skill)
+            print("not in")
+            print(type(skills_list_from_db))
+            print(skills_list_from_db)
+            print()
+
+
+
+
+
+
+            # check if skill_name already exists
+            # skill_name_obj = session.query(SkillName).filter_by(skill_name=skill["skill_name"]).first()
+            #
+            # if not skill_name_obj:  # TODO to byla wczesniej osobna funkcja ale sqlite nie obsluguje kilku watkow bazy, i musi byc if tutaj
+            #     skill_name_obj = SkillName(skill_name=skill["skill_name"])
+            #     session.add(skill_name_obj)
+            #
+            # skill_object = SkillUser()
+            # skill_object.skill = skill_name_obj
+            # skill_object.skill_level = skill["skill_level"]
+            #
+            # cv_being_updated.skills.append(skill_object)
+
+        else:
+            print("old skill, no update needed")
+
+
+
     # session.commit()
 
-    return "", 202
+    # return "", 202
+    return "feature in progress", 222
 
 
 @app.route('/api/cv/<id>', methods=['DELETE'])
 def api_cv_id_delete(id=None):
 
     cv_to_be_deleted = session.query(User).get(id)
-    print(cv_to_be_deleted)
 
     try:
         session.delete(cv_to_be_deleted)
@@ -127,7 +182,7 @@ def api_cv_id_delete(id=None):
 
         return "", 202
 
-    except UnmappedInstanceError as ex:  # TODO zamienić Exceptions na poprawny błąd - Class 'builtins.NoneType' is not mapped
+    except UnmappedInstanceError:
         return "", 404
 
 
