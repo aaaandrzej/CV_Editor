@@ -1,7 +1,6 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Table, inspect
+from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship, class_mapper, attributes
-import json
+from sqlalchemy.orm import relationship
 
 Base = declarative_base()
 
@@ -17,14 +16,10 @@ class SkillUser(Base):
     user = relationship("User", back_populates="skills")
 
     def object_as_dict(self):
-        # return {self.skill.skill_name : self.skill_level}
         return {
-            # "skill":
-            # {
-                "skill_name": self.skill.skill_name,
-                "skill_level": self.skill_level
-            }
-        # }
+            "skill_name": self.skill.skill_name,
+            "skill_level": self.skill_level
+        }
 
     def __repr__(self):
         return f"{self.object_as_dict()}"
@@ -33,10 +28,10 @@ class SkillUser(Base):
 class User(Base):
     __tablename__ = 'user'
     id = Column(Integer, primary_key=True)
-    username = Column(String)  # nullable=False)
-    password = Column(String)  # nullable=False)
-    firstname = Column(String)  # nullable=False)
-    lastname = Column(String)  # nullable=False)
+    username = Column(String)
+    password = Column(String)
+    firstname = Column(String)
+    lastname = Column(String)
 
     skills = relationship("SkillUser", back_populates="user", cascade="all, delete-orphan")
     experience = relationship("Experience", back_populates="user", cascade="all, delete-orphan")
@@ -44,15 +39,14 @@ class User(Base):
     def __repr__(self):
         return f"{self.object_as_dict()}"
 
-    # def object_as_dict(self):
-    #     return {c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs}
-
     def object_as_dict(self):
         return {
             "firstname": self.firstname,
             "lastname": self.lastname,
             "skills": [skill.object_as_dict() for skill in self.skills],
+            # TODO dlaczego pycharm podswietla na zolto self.skills?
             "experience": [exp.object_as_dict() for exp in self.experience]
+            # TODO dlaczego pycharm podswietla na zolto self.experience?
         }
 
 
@@ -72,9 +66,9 @@ class Experience(Base):
 
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('user.id'))
-    company = Column(String)  # nullable=False)
-    project = Column(String)  # nullable=False)
-    duration = Column(Integer)  # nullable=False)
+    company = Column(String)
+    project = Column(String)
+    duration = Column(Integer)
 
     user = relationship("User", back_populates="experience")
 
@@ -83,10 +77,7 @@ class Experience(Base):
 
     def object_as_dict(self):
         return {
-            # "project_details":
-            #     {
-                    "company": self.company,
-                    "project": self.project,
-                    "duration": self.duration
-                }
-        # }
+            "company": self.company,
+            "project": self.project,
+            "duration": self.duration
+        }
