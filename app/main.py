@@ -11,6 +11,8 @@ import json
 session = get_session(echo=False)
 
 app = Flask(__name__)
+
+
 # app.secret_key = 'tajny-klucz-9523'
 # app.register_blueprint(auth_bp)
 
@@ -23,7 +25,6 @@ def index():
 @app.route('/api/cv', methods=['GET'])
 @app.route('/api/cv/', methods=['GET'])
 def api_cv_get():
-
     all_db_records = [user.object_as_dict() for user in session.query(User)]
 
     return json.dumps(all_db_records)  # TODO halo Piotr, czy da się bez json.dumps - zgodnie z uwaga z PR?
@@ -32,7 +33,6 @@ def api_cv_get():
 @app.route('/api/cv', methods=['POST'])  # TODO to nie dziala z /cv (/cv/ jest OK)
 @app.route('/api/cv/', methods=['POST'])
 def api_cv_post():
-
     # ADD NEW CV BASED ON JSON DATA
 
     json_data = request.get_json()
@@ -85,7 +85,6 @@ def api_cv_post():
 
 @app.route('/api/cv/<id>', methods=['GET'])
 def api_cv_id_get(id=None):
-
     one_db_record = session.query(User).get(id)
 
     try:
@@ -98,7 +97,6 @@ def api_cv_id_get(id=None):
 
 @app.route('/api/cv/<id>', methods=['PUT'])
 def api_cv_id_put(id=None):
-
     # ADD NEW CV BASED ON JSON DATA
 
     json_data = request.get_json()
@@ -120,60 +118,76 @@ def api_cv_id_put(id=None):
     # print(cv_being_updated.skills)
     print()
 
+    # TODO czy powinienem usuwac z bazy skille, ktorych nie bylo w jsonie??
+    # TODO bo jesli tak to bez sensu te wszystkie ify ponizej, i moglem tylko zastapic starą liste skills nową
+
     # add skills from json to new_cv object, if skills were provided:
-    for skill in json_data.get('skills', []):
-        # skill_name_obj = SkillName(skill_name=skill["skill_name"])
-        # skill_obj = SkillUser()
-        # skill_obj.skill = skill_name_obj
-        # skill_obj.skill_level = skill["skill_level"]
+    for json_skill in json_data.get('skills', []):
 
-        skills_list_from_db = [skill.object_as_dict() for skill in cv_being_updated.skills]
-        # print(skills_list_from_db)
-        # print(type(skills_list_from_db))
-        # print()
+        # check if skill_name doesn't exist in db:
+        if json_skill["skill_name"] not in [db_skill.object_as_dict()["skill_name"] for db_skill in
+                                            cv_being_updated.skills]:
 
-        if skill not in skills_list_from_db:   # TODO WHYYYY!!!????
-        # if skill_obj not in cv_being_updated.skills:   # TODO WHYYYY!!!????
-        #     print(skill_obj)
-            print(type(skill))
-            print(skill)
-            print("not in")
-            print(type(skills_list_from_db))
-            print(skills_list_from_db)
+            print(json_skill["skill_name"], "not in", cv_being_updated.skills, "will add")
+
+            # new skill, add skill:
+            print(json_skill, "new, lets add")
+
+            skill_name_obj = SkillName(skill_name=json_skill["skill_name"])
+            session.add(skill_name_obj)
+
+            skill_object = SkillUser()
+            skill_object.skill = skill_name_obj
+            skill_object.skill_level = json_skill["skill_level"]
+
+            print("totally new skill", skill_object)
+
+            cv_being_updated.skills.append(skill_object)
+
+            print("updated user", cv_being_updated)
+
+            session.commit()
+
+            return "", 202
+
+        # skill in db, update level:
+        elif json_skill in [db_skill.object_as_dict() for db_skill in cv_being_updated.skills]:
+            print(json_skill, "in db but level different, update skill_level")
+            print("is in")
+            print(cv_being_updated.skills)
             print()
 
+            skill_being_updated = "Null"
 
+            for db_skill in [db_skill.object_as_dict() for db_skill in cv_being_updated.skills]:
+                print(db_skill, "update my level?")
+                if db_skill["skill_name"] == json_skill["skill_name"]:
+                    print("yes")
+                    skill_being_updated = json_skill
+                    # TODO jesli tedy to tu zamienic wszystko na obiekt i dodac do cv_veing_updated
+                    print(skill_being_updated, "updated")
 
+                # skill_name_obj = session.query(SkillName).filter_by(skill_name=json_skill["skill_name"]).first()
+                #
+                # skill_object = SkillUser()
+                # skill_object.skill = skill_name_obj
+                # skill_object.skill_level = json_skill["skill_level"]
+                #
+                # print("skill obj with updated level", skill_object)
+                #
+                # # TODO tu odnalezc skilla i go zaktualizowac a nie dodawac...
+                #
+                # cv_being_updated.skills.append(skill_object)
+                #
+                # print("updated user", cv_being_updated)
+                #
+                # session.commit()
 
-
-
-            # check if skill_name already exists
-            # skill_name_obj = session.query(SkillName).filter_by(skill_name=skill["skill_name"]).first()
-            #
-            # if not skill_name_obj:  # TODO to byla wczesniej osobna funkcja ale sqlite nie obsluguje kilku watkow bazy, i musi byc if tutaj
-            #     skill_name_obj = SkillName(skill_name=skill["skill_name"])
-            #     session.add(skill_name_obj)
-            #
-            # skill_object = SkillUser()
-            # skill_object.skill = skill_name_obj
-            # skill_object.skill_level = skill["skill_level"]
-            #
-            # cv_being_updated.skills.append(skill_object)
-
-        else:
-            print("old skill, no update needed")
-
-
-
-    # session.commit()
-
-    # return "", 202
-    return "feature in progress", 222
+    return "", 202
 
 
 @app.route('/api/cv/<id>', methods=['DELETE'])
 def api_cv_id_delete(id=None):
-
     cv_to_be_deleted = session.query(User).get(id)
 
     try:
