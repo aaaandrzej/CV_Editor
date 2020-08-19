@@ -1,5 +1,4 @@
-from flask import Flask, request, jsonify, render_template, redirect
-from auth import auth_bp, login_required
+from flask import Flask, request, jsonify, Response
 
 from models import User, SkillUser, SkillName, Experience
 from session import get_session
@@ -10,13 +9,12 @@ session = get_session(echo=False)
 
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
-# app.secret_key = 'tajny-klucz-9523'  # do odkomentowania jak będę robić auth
-# app.register_blueprint(auth_bp)  # j/w
 
 
 @app.route('/')
 def index():
-    return "For API please use /api/cv or /api/cv/<id>"  # TODO jak to zmusić do wyświetlania <id> w safari? po uruchomieniu tego w przeglądarce mam: "For API please use /api/cv or /api/cv/"
+    msg = "For API please use /api/cv or /api/cv/<id>"
+    return Response(msg, mimetype='text/plain')
 
 
 @app.route('/api/cv', methods=['GET'])
@@ -27,7 +25,7 @@ def api_cv_get():
     return jsonify(all_db_records)
 
 
-@app.route('/api/cv', methods=['POST'])  # TODO to nie dziala z /cv (/cv/ jest OK)
+@app.route('/api/cv', methods=['POST'])
 @app.route('/api/cv/', methods=['POST'])
 def api_cv_post():
 
@@ -52,7 +50,7 @@ def api_cv_post():
         # check if skill_name already exists
         skill_name_obj = session.query(SkillName).filter_by(skill_name=skill["skill_name"]).first()
 
-        if not skill_name_obj:  # TODO to byla wczesniej osobna funkcja ale sqlite nie obsluguje kilku watkow bazy, i musi byc if tutaj
+        if not skill_name_obj:
             skill_name_obj = SkillName(skill_name=skill["skill_name"])
             session.add(skill_name_obj)
 
@@ -60,7 +58,7 @@ def api_cv_post():
         skill_object.skill = skill_name_obj
         skill_object.skill_level = skill["skill_level"]
 
-        new_cv.skills.append(skill_object)  # TODO dlaczego pycharm podswietla append na zolto..?
+        new_cv.skills.append(skill_object)
 
     # add experience from json to new_cv object, if experience was provided:
     for exp in json_data.get('experience', []):
@@ -70,7 +68,7 @@ def api_cv_post():
         exp_object.project = exp["project"]
         exp_object.duration = exp["duration"]
 
-        new_cv.experience.append(exp_object)  # TODO dlaczego pycharm podswietla append na zolto..?
+        new_cv.experience.append(exp_object)
 
     session.add(new_cv)
     session.commit()
@@ -109,8 +107,8 @@ def api_cv_id_put(id=None):
         if key not in ["skills", "experience"]:
             setattr(cv_being_updated, key, value)
 
-    # overwrite user's skills:  # TODO zakładam, że nadpisuję istniejące skille tymi przekazanymi w json'ie. jeśli nie, to mam prawie gotowy, chociaz pokręcony kod w poprzednim commicie
-    if "skills" in json_data.keys():  # TODO kod jest zduplikowany z funkcją POST, czy powinienem to przerobić na funkcje add_skills() i add_experience() i wynieść poza endpointy?
+    # overwrite user's skills (will be redesigned in future):
+    if "skills" in json_data.keys():
 
         cv_being_updated.skills = []
 
@@ -128,7 +126,7 @@ def api_cv_id_put(id=None):
 
             cv_being_updated.skills.append(skill_object)
 
-    # overwrite user's experience:  # TODO zakładam, że nadpisuję istniejące experience tym przekazanymi w json'ie, tak jak w skills powyżej
+    # overwrite user's experience (will be redesigned in future):
     if "experience" in json_data.keys():
 
         cv_being_updated.experience = []
@@ -143,7 +141,7 @@ def api_cv_id_put(id=None):
 
     session.commit()
 
-    return "", 202
+    return "", 200
 
 
 @app.route('/api/cv/<id>', methods=['DELETE'])
@@ -155,7 +153,7 @@ def api_cv_id_delete(id=None):
         session.delete(cv_to_be_deleted)
         session.commit()
 
-        return "", 202
+        return "", 204
 
     else:
         return "", 404

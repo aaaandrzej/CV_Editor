@@ -44,9 +44,7 @@ class User(Base):
             "firstname": self.firstname,
             "lastname": self.lastname,
             "skills": [skill.object_as_dict() for skill in self.skills],
-            # TODO dlaczego pycharm podswietla na zolto self.skills?
             "experience": [exp.object_as_dict() for exp in self.experience]
-            # TODO dlaczego pycharm podswietla na zolto self.experience?
         }
 
 
