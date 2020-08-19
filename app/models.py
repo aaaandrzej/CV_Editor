@@ -1,34 +1,81 @@
+from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, inspect
+from sqlalchemy.orm import relationship
 
 Base = declarative_base()
 
 
-class Cv(Base):
-    __tablename__ = 'basic_table'
+class SkillUser(Base):
+    __tablename__ = 'skill_user'
 
-    id = Column(Integer, primary_key=True)
-    firstname = Column(String(), nullable=False)
-    lastname = Column(String(), nullable=False)
-    python = Column(Integer())
-    javascript = Column(Integer())
-    sql = Column(Integer())
-    english = Column(Integer())
+    user_id = Column(Integer, ForeignKey('user.id'), primary_key=True)
+    skill_id = Column(Integer, ForeignKey('skill.id'), primary_key=True)
+    skill_level = Column(Integer())
 
-    def __repr__(self):
-        return f"{self.firstname} {self.lastname}"
+    skill = relationship("SkillName", back_populates="users")
+    user = relationship("User", back_populates="skills")
 
     def object_as_dict(self):
-        return {c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs}
+        return {
+            "skill_name": self.skill.skill_name,
+            "skill_level": self.skill_level
+        }
+
+    def __repr__(self):
+        return f"{self.object_as_dict()}"
 
 
 class User(Base):
-    __tablename__ = 'login_table'
-
+    __tablename__ = 'user'
     id = Column(Integer, primary_key=True)
-    username = Column(String(), nullable=False)
-    password = Column(String(), nullable=False)
+    username = Column(String)
+    password = Column(String)
+    firstname = Column(String)
+    lastname = Column(String)
+
+    skills = relationship("SkillUser", back_populates="user", cascade="all, delete-orphan")
+    experience = relationship("Experience", back_populates="user", cascade="all, delete-orphan")
 
     def __repr__(self):
-        return f"{self.username} {self.password}"
+        return f"{self.object_as_dict()}"
 
+    def object_as_dict(self):
+        return {
+            "firstname": self.firstname,
+            "lastname": self.lastname,
+            "skills": [skill.object_as_dict() for skill in self.skills],
+            "experience": [exp.object_as_dict() for exp in self.experience]
+        }
+
+
+class SkillName(Base):
+    __tablename__ = 'skill'
+    id = Column(Integer, primary_key=True)
+    skill_name = Column(String(), nullable=False, unique=True)
+
+    users = relationship("SkillUser", back_populates="skill")
+
+    def __repr__(self):
+        return f"'{self.skill_name}'"
+
+
+class Experience(Base):
+    __tablename__ = 'experience'
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('user.id'))
+    company = Column(String)
+    project = Column(String)
+    duration = Column(Integer)
+
+    user = relationship("User", back_populates="experience")
+
+    def __repr__(self):
+        return f"{self.object_as_dict()}"
+
+    def object_as_dict(self):
+        return {
+            "company": self.company,
+            "project": self.project,
+            "duration": self.duration
+        }
