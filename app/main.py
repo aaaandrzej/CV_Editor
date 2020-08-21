@@ -111,42 +111,44 @@ def api_cv_id_put(id: int = None) -> 200:
     print(cv_being_updated)
 
     # update basic user's attributes:
-    for key, value in json_data.items():
+    for key, value in json_data.items():  # TODO jeśli nie przekażę np firstname to nie zostanie wyczyszczone - to błąd?
         if key not in ["skills", "experience"]:
             setattr(cv_being_updated, key, value)
 
-    # overwrite user's skills (will be redesigned in future):
-    if "skills" in json_data.keys():  # TODO ten if usunac, "skills" jest wymagane
+    # overwrite user's skills:
+    cv_being_updated.skills = []
 
-        cv_being_updated.skills = []
 
-        for json_skill in json_data.get('skills', []):  # TODO spr czy kasowanie skill user odbywa sie automatycznie
+    # TODO WORK IN PROGRESS:
+    # db_query = session.query(SkillName.skill_name.label('skill_name')).filter(SkillName.skill_name)
+    #
+    # db_skill_name_list = [skill_name for skill_name in db_query]
 
-            skill_name_obj = session.query(SkillName).filter_by(skill_name=json_skill["skill_name"]).first()  # TODO zamienic to na liste skillnames
-            # skill_name_obj = session.query(SkillName.skill_name.label('skill_name')).filter(SkillName.skill_name.in_([list comprehension])).first()  # TODO zamienic to na liste skillnames
+    for json_skill in json_data.get('skills', []):  # TODO zamienić to na funkcję, to jest dubel z POST
 
-            if not skill_name_obj:
-                skill_name_obj = SkillName(skill_name=json_skill["skill_name"])
-                session.add(skill_name_obj)
+        skill_name_obj = session.query(SkillName).filter_by(skill_name=json_skill["skill_name"]).first()  # TODO zamienic to na liste skillnames i wyrzucić poziom wyżej
+        # skill_name_obj = session.query(SkillName.skill_name.label('skill_name')).filter(SkillName.skill_name.in_([list comprehension])).first()  # TODO zamienic to na liste skillnames i wyrzucić poziom wyżej
 
-            skill_object = SkillUser()
-            skill_object.skill = skill_name_obj
-            skill_object.skill_level = json_skill["skill_level"]
+        if not skill_name_obj:
+            skill_name_obj = SkillName(skill_name=json_skill["skill_name"])
+            session.add(skill_name_obj)
 
-            cv_being_updated.skills.append(skill_object)
+        skill_object = SkillUser()
+        skill_object.skill = skill_name_obj
+        skill_object.skill_level = json_skill["skill_level"]
 
-    # overwrite user's experience (will be redesigned in future):
-    if "experience" in json_data.keys():  # TODO spr czy bez .keys() zadziala
+        cv_being_updated.skills.append(skill_object)
 
-        cv_being_updated.experience = []
+    # overwrite user's experience:
+    cv_being_updated.experience = []
 
-        for json_exp in json_data.get('experience', []):
-            exp_object = Experience()
-            exp_object.company = json_exp["company"]
-            exp_object.project = json_exp["project"]
-            exp_object.duration = json_exp["duration"]
+    for json_exp in json_data.get('experience', []):
+        exp_object = Experience()
+        exp_object.company = json_exp["company"]
+        exp_object.project = json_exp["project"]
+        exp_object.duration = json_exp["duration"]
 
-            cv_being_updated.experience.append(exp_object)
+        cv_being_updated.experience.append(exp_object)
 
     session.commit()
 
