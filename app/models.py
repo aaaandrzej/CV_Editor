@@ -15,7 +15,7 @@ class SkillUser(Base):
     skill = relationship("SkillName", back_populates="users")
     user = relationship("User", back_populates="skills")
 
-    def object_as_dict(self):
+    def object_as_dict(self) -> dict:
         return {
             "skill_name": self.skill.skill_name,
             "skill_level": self.skill_level
@@ -39,7 +39,7 @@ class User(Base):
     def __repr__(self):
         return f"{self.object_as_dict()}"
 
-    def object_as_dict(self):
+    def object_as_dict(self) -> dict:
         return {
             "firstname": self.firstname,
             "lastname": self.lastname,
@@ -73,7 +73,7 @@ class Experience(Base):
     def __repr__(self):
         return f"{self.object_as_dict()}"
 
-    def object_as_dict(self):
+    def object_as_dict(self) -> dict:
         return {
             "company": self.company,
             "project": self.project,

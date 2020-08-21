@@ -3,31 +3,32 @@ from flask import Flask, request, jsonify, Response
 from models import User, SkillUser, SkillName, Experience
 from session import get_session
 
-import json
-
-session = get_session(echo=False)
-
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
 
 
 @app.route('/')
-def index():
+def index() -> Response:
     msg = "For API please use /api/cv or /api/cv/<id>"
     return Response(msg, mimetype='text/plain')
 
 
 @app.route('/api/cv', methods=['GET'])
 @app.route('/api/cv/', methods=['GET'])
-def api_cv_get():
-    all_db_records = [user.object_as_dict() for user in session.query(User)]
+def api_cv_get() -> jsonify:
+
+    session = get_session(echo=False)
+    """przenoszę session do endpointów bo kiedy było zdefiniowane globalnie 
+    to ubijanie i podnoszenie bazy podczas działania aplikacji wywalało błędy"""
+
+    all_db_records = [user.object_as_dict() for user in session.query(User)]  # TODO spr czy nie wystepuje n+1
 
     return jsonify(all_db_records)
 
 
 @app.route('/api/cv', methods=['POST'])
 @app.route('/api/cv/', methods=['POST'])
-def api_cv_post():
+def api_cv_post() -> 201:
 
     # ADD NEW CV BASED ON JSON DATA
 
@@ -43,6 +44,8 @@ def api_cv_post():
 
     new_cv.firstname = json_data["firstname"]
     new_cv.lastname = json_data["lastname"]
+
+    session = get_session(echo=False)
 
     # add skills from json to new_cv object, if skills were provided:
     for skill in json_data.get('skills', []):
@@ -77,11 +80,14 @@ def api_cv_post():
 
 
 @app.route('/api/cv/<id>', methods=['GET'])
-def api_cv_id_get(id=None):
+def api_cv_id_get(id: int = None) -> jsonify:
+
+    session = get_session(echo=False)
+
     one_db_record = session.query(User).get(id)
 
     try:
-        response = json.dumps(one_db_record.object_as_dict())
+        response = jsonify(one_db_record.object_as_dict())
         return response
 
     except AttributeError:
@@ -89,11 +95,13 @@ def api_cv_id_get(id=None):
 
 
 @app.route('/api/cv/<id>', methods=['PUT'])
-def api_cv_id_put(id=None):
+def api_cv_id_put(id: int = None) -> 200:
 
     # UPDATE CV OF ID [id] WITH JSON DATA
 
     json_data = request.get_json()
+
+    session = get_session(echo=False)
 
     cv_being_updated = session.query(User).get(id)
 
@@ -108,13 +116,14 @@ def api_cv_id_put(id=None):
             setattr(cv_being_updated, key, value)
 
     # overwrite user's skills (will be redesigned in future):
-    if "skills" in json_data.keys():
+    if "skills" in json_data.keys():  # TODO ten if usunac, "skills" jest wymagane
 
         cv_being_updated.skills = []
 
-        for json_skill in json_data.get('skills', []):
+        for json_skill in json_data.get('skills', []):  # TODO spr czy kasowanie skill user odbywa sie automatycznie
 
-            skill_name_obj = session.query(SkillName).filter_by(skill_name=json_skill["skill_name"]).first()
+            skill_name_obj = session.query(SkillName).filter_by(skill_name=json_skill["skill_name"]).first()  # TODO zamienic to na liste skillnames
+            # skill_name_obj = session.query(SkillName.skill_name.label('skill_name')).filter(SkillName.skill_name.in_([list comprehension])).first()  # TODO zamienic to na liste skillnames
 
             if not skill_name_obj:
                 skill_name_obj = SkillName(skill_name=json_skill["skill_name"])
@@ -127,7 +136,7 @@ def api_cv_id_put(id=None):
             cv_being_updated.skills.append(skill_object)
 
     # overwrite user's experience (will be redesigned in future):
-    if "experience" in json_data.keys():
+    if "experience" in json_data.keys():  # TODO spr czy bez .keys() zadziala
 
         cv_being_updated.experience = []
 
@@ -145,7 +154,9 @@ def api_cv_id_put(id=None):
 
 
 @app.route('/api/cv/<id>', methods=['DELETE'])
-def api_cv_id_delete(id=None):
+def api_cv_id_delete(id: int = None) -> 204:
+
+    session = get_session(echo=False)
 
     cv_to_be_deleted = session.query(User).get(id)
 
@@ -161,3 +172,6 @@ def api_cv_id_delete(id=None):
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+
+#  TODO agregacja - zwroc uzytkownikow ktorzy maja okreslona kombinacje skilli z poziomem zaawansowania
