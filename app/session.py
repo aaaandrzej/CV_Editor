@@ -1,15 +1,9 @@
-from sqlalchemy import event, create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, Session
 
 
-def _fk_pragma_on_connect(dbapi_con, con_record):
-    dbapi_con.execute('pragma foreign_keys=ON')
+def get_session(echo: bool = False) -> Session:
+    engine = create_engine('postgresql://postgres:postgres@localhost:5432/my_db', echo=echo)
+    session_factory = sessionmaker(bind=engine)
 
-
-def get_session(echo=False):
-    engine = create_engine('sqlite:///CV_Editor.sqlite', echo=echo)
-    DBSession = sessionmaker(bind=engine)
-
-    event.listen(engine, 'connect', _fk_pragma_on_connect)
-
-    return DBSession()
+    return session_factory()
