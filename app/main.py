@@ -170,8 +170,15 @@ def api_cv_id_delete(id: int = None) -> 204:
         return "", 404
 
 
+@app.route('/api/cv/stats/<id>', methods=['GET'])  #  TODO agregacja - zwroc uzytkownikow ktorzy maja okreslona kombinacje skilli z poziomem zaawansowania
+def api_cv_stats(id: int = None) -> 200:
+
+    json_data = request.get_json()
+
+    session = get_session(echo=False)
+
+    return "in progress"
+
+
 if __name__ == '__main__':
     app.run(debug=True)
-
-
-#  TODO agregacja - zwroc uzytkownikow ktorzy maja okreslona kombinacje skilli z poziomem zaawansowania
