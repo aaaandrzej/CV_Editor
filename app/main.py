@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, Response
 
 from models import User, SkillUser, SkillName, Experience
 from session import get_session
+from functions import replace_skills_with_json, replace_experience_with_json
 
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
@@ -17,9 +18,7 @@ def index() -> Response:
 @app.route('/api/cv/', methods=['GET'])
 def api_cv_get() -> jsonify:
 
-    session = get_session(echo=False)
-    """przenoszę session do endpointów bo kiedy było zdefiniowane globalnie 
-    to ubijanie i podnoszenie bazy podczas działania aplikacji wywalało błędy"""
+    session = get_session()
 
     all_db_records = [user.object_as_dict() for user in session.query(User)]  # TODO spr czy nie wystepuje n+1
 
@@ -45,33 +44,11 @@ def api_cv_post() -> 201:
     new_cv.firstname = json_data["firstname"]
     new_cv.lastname = json_data["lastname"]
 
-    session = get_session(echo=False)
+    session = get_session()
 
-    # add skills from json to new_cv object, if skills were provided:
-    for skill in json_data.get('skills', []):
+    replace_skills_with_json(session, new_cv, json_data)
 
-        # check if skill_name already exists
-        skill_name_obj = session.query(SkillName).filter_by(skill_name=skill["skill_name"]).first()
-
-        if not skill_name_obj:
-            skill_name_obj = SkillName(skill_name=skill["skill_name"])
-            session.add(skill_name_obj)
-
-        skill_object = SkillUser()
-        skill_object.skill = skill_name_obj
-        skill_object.skill_level = skill["skill_level"]
-
-        new_cv.skills.append(skill_object)
-
-    # add experience from json to new_cv object, if experience was provided:
-    for exp in json_data.get('experience', []):
-
-        exp_object = Experience()
-        exp_object.company = exp["company"]
-        exp_object.project = exp["project"]
-        exp_object.duration = exp["duration"]
-
-        new_cv.experience.append(exp_object)
+    replace_experience_with_json(new_cv, json_data)
 
     session.add(new_cv)
     session.commit()
@@ -82,7 +59,7 @@ def api_cv_post() -> 201:
 @app.route('/api/cv/<id>', methods=['GET'])
 def api_cv_id_get(id: int = None) -> jsonify:
 
-    session = get_session(echo=False)
+    session = get_session()
 
     one_db_record = session.query(User).get(id)
 
@@ -101,54 +78,21 @@ def api_cv_id_put(id: int = None) -> 200:
 
     json_data = request.get_json()
 
-    session = get_session(echo=False)
+    session = get_session()
 
     cv_being_updated = session.query(User).get(id)
 
     if cv_being_updated is None:
         return "", 404
 
-    print(cv_being_updated)
-
     # update basic user's attributes:
     for key, value in json_data.items():  # TODO jeśli nie przekażę np firstname to nie zostanie wyczyszczone - to błąd?
         if key not in ["skills", "experience"]:
             setattr(cv_being_updated, key, value)
 
-    # overwrite user's skills:
-    cv_being_updated.skills = []
+    replace_skills_with_json(session, cv_being_updated, json_data)
 
-
-    # TODO WORK IN PROGRESS:
-    # db_query = session.query(SkillName.skill_name.label('skill_name')).filter(SkillName.skill_name)
-    #
-    # db_skill_name_list = [skill_name for skill_name in db_query]
-
-    for json_skill in json_data.get('skills', []):  # TODO zamienić to na funkcję, to jest dubel z POST
-
-        skill_name_obj = session.query(SkillName).filter_by(skill_name=json_skill["skill_name"]).first()  # TODO zamienic to na liste skillnames i wyrzucić poziom wyżej
-        # skill_name_obj = session.query(SkillName.skill_name.label('skill_name')).filter(SkillName.skill_name.in_([list comprehension])).first()  # TODO zamienic to na liste skillnames i wyrzucić poziom wyżej
-
-        if not skill_name_obj:
-            skill_name_obj = SkillName(skill_name=json_skill["skill_name"])
-            session.add(skill_name_obj)
-
-        skill_object = SkillUser()
-        skill_object.skill = skill_name_obj
-        skill_object.skill_level = json_skill["skill_level"]
-
-        cv_being_updated.skills.append(skill_object)
-
-    # overwrite user's experience:
-    cv_being_updated.experience = []
-
-    for json_exp in json_data.get('experience', []):
-        exp_object = Experience()
-        exp_object.company = json_exp["company"]
-        exp_object.project = json_exp["project"]
-        exp_object.duration = json_exp["duration"]
-
-        cv_being_updated.experience.append(exp_object)
+    replace_experience_with_json(cv_being_updated, json_data)
 
     session.commit()
 
@@ -158,7 +102,7 @@ def api_cv_id_put(id: int = None) -> 200:
 @app.route('/api/cv/<id>', methods=['DELETE'])
 def api_cv_id_delete(id: int = None) -> 204:
 
-    session = get_session(echo=False)
+    session = get_session()
 
     cv_to_be_deleted = session.query(User).get(id)
 
@@ -177,7 +121,7 @@ def api_cv_stats(id: int = None) -> 200:
 
     json_data = request.get_json()
 
-    session = get_session(echo=False)
+    session = get_session()
 
     return "in progress"
 
