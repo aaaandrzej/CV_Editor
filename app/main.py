@@ -18,9 +18,11 @@ def index() -> Response:
 @app.route('/api/cv/', methods=['GET'])
 def api_cv_get() -> jsonify:
 
+    # GET ALL CVs
+
     session = get_session()
 
-    all_db_records = [user.object_as_dict() for user in session.query(User)]  # TODO spr czy nie wystepuje n+1
+    all_db_records = [user.object_as_dict() for user in session.query(User)]  # TODO ANDRZEJ - spr czy nie wystepuje n+1
 
     return jsonify(all_db_records)
 
@@ -58,6 +60,9 @@ def api_cv_post() -> 201:
 
 @app.route('/api/cv/<id>', methods=['GET'])
 def api_cv_id_get(id: int = None) -> jsonify:
+
+    # GET ONE CV OF ID [id]
+
 
     session = get_session()
 
@@ -102,6 +107,8 @@ def api_cv_id_put(id: int = None) -> 200:
 @app.route('/api/cv/<id>', methods=['DELETE'])
 def api_cv_id_delete(id: int = None) -> 204:
 
+    # DELETE CV OF ID [id]
+
     session = get_session()
 
     cv_to_be_deleted = session.query(User).get(id)
@@ -116,14 +123,31 @@ def api_cv_id_delete(id: int = None) -> 204:
         return "", 404
 
 
-@app.route('/api/cv/stats/<id>', methods=['GET'])  #  TODO agregacja - zwroc uzytkownikow ktorzy maja okreslona kombinacje skilli z poziomem zaawansowania
-def api_cv_stats(id: int = None) -> 200:
+@app.route('/api/cv/stats', methods=['GET'])
+def api_cv_stats() -> jsonify:
 
-    json_data = request.get_json()
+    # GET CVs OF USERS WITH PROVIDED SKILL SET
+
+    skill_name = request.args.get('skill_name')
+    skill_level = int(request.args.get('skill_level'))
+
+    print(skill_name)
+    print(skill_level)
 
     session = get_session()
 
-    return "in progress"
+    users_with_skill_name = session.query(User).join(SkillUser).join(SkillName).filter(
+        SkillName.skill_name == skill_name).all()  # TODO to dziala dla SkillName ale dla SkillUser nie chce
+
+    users_with_skill_set = users_with_skill_name
+
+    for user in users_with_skill_set:
+        if {'skill_name': skill_name, 'skill_level': skill_level} not in [skill_name.object_as_dict() for skill_name in
+                                                                          user.skills]:
+
+            users_with_skill_set.remove(user)
+
+    return jsonify([user.object_as_dict() for user in users_with_skill_set])
 
 
 if __name__ == '__main__':
