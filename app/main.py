@@ -131,9 +131,6 @@ def api_cv_stats() -> jsonify:
     skill_name = request.args.get('skill_name')
     skill_level = int(request.args.get('skill_level'))
 
-    print(skill_name)
-    print(skill_level)
-
     session = get_session()
 
     users_with_skill_name = session.query(User).join(SkillUser).join(SkillName).filter(
