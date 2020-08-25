@@ -1,6 +1,6 @@
-from flask import Flask, request, jsonify, Response
-
-from models import User, SkillUser, SkillName, Experience
+from flask import Flask, request, jsonify, Response, make_response
+from typing import Tuple
+from models import User, SkillUser, SkillName
 from session import get_session
 from functions import replace_skills_with_json, replace_experience_with_json
 
@@ -16,7 +16,7 @@ def index() -> Response:
 
 @app.route('/api/cv', methods=['GET'])
 @app.route('/api/cv/', methods=['GET'])
-def api_cv_get() -> jsonify:
+def api_cv_get() -> Response:
 
     # GET ALL CVs
 
@@ -29,7 +29,7 @@ def api_cv_get() -> jsonify:
 
 @app.route('/api/cv', methods=['POST'])
 @app.route('/api/cv/', methods=['POST'])
-def api_cv_post() -> 201:
+def api_cv_post() -> Tuple[str, int]:
 
     # ADD NEW CV BASED ON JSON DATA
 
@@ -38,13 +38,13 @@ def api_cv_post() -> 201:
     # create new_cv object and map basic user data from json:
     new_cv = User()
 
-    if "username" in json_data:
-        new_cv.username = json_data["username"]
-    if "password" in json_data:
-        new_cv.password = json_data["password"]
+    if 'username' in json_data:
+        new_cv.username = json_data['username']
+    if 'password' in json_data:
+        new_cv.password = json_data['password']
 
-    new_cv.firstname = json_data["firstname"]
-    new_cv.lastname = json_data["lastname"]
+    new_cv.firstname = json_data['firstname']
+    new_cv.lastname = json_data['lastname']
 
     session = get_session()
 
@@ -59,10 +59,9 @@ def api_cv_post() -> 201:
 
 
 @app.route('/api/cv/<id>', methods=['GET'])
-def api_cv_id_get(id: int = None) -> jsonify:
+def api_cv_id_get(id: int) -> Response:
 
     # GET ONE CV OF ID [id]
-
 
     session = get_session()
 
@@ -73,11 +72,11 @@ def api_cv_id_get(id: int = None) -> jsonify:
         return response
 
     except AttributeError:
-        return "", 404
+        return make_response('', 404)
 
 
 @app.route('/api/cv/<id>', methods=['PUT'])
-def api_cv_id_put(id: int = None) -> 200:
+def api_cv_id_put(id: int) -> Tuple[str, int]:
 
     # UPDATE CV OF ID [id] WITH JSON DATA
 
@@ -90,10 +89,19 @@ def api_cv_id_put(id: int = None) -> 200:
     if cv_being_updated is None:
         return "", 404
 
-    # update basic user's attributes:
-    for key, value in json_data.items():  # TODO jeśli nie przekażę np firstname to nie zostanie wyczyszczone - to błąd?
-        if key not in ["skills", "experience"]:
-            setattr(cv_being_updated, key, value)
+    # replace basic user's attributes:
+    if 'username' in json_data:
+        cv_being_updated.username = json_data['username']
+    else:
+        cv_being_updated.username = ""
+
+    if 'password' in json_data:
+        cv_being_updated.password = json_data['password']
+    else:
+        cv_being_updated.password = ""
+
+    cv_being_updated.firstname = json_data['firstname']
+    cv_being_updated.lastname = json_data['lastname']
 
     replace_skills_with_json(session, cv_being_updated, json_data)
 
@@ -105,7 +113,7 @@ def api_cv_id_put(id: int = None) -> 200:
 
 
 @app.route('/api/cv/<id>', methods=['DELETE'])
-def api_cv_id_delete(id: int = None) -> 204:
+def api_cv_id_delete(id: int) -> Tuple[str, int]:
 
     # DELETE CV OF ID [id]
 
@@ -124,7 +132,7 @@ def api_cv_id_delete(id: int = None) -> 204:
 
 
 @app.route('/api/cv/stats', methods=['GET'])
-def api_cv_stats() -> jsonify:
+def api_cv_stats() -> Response:
 
     # GET CVs OF USERS WITH PROVIDED SKILL SET
 

@@ -21,7 +21,7 @@ class SkillUser(Base):
             "skill_level": self.skill_level
         }
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"{self.object_as_dict()}"
 
 
@@ -36,7 +36,7 @@ class User(Base):
     skills = relationship("SkillUser", back_populates="user", cascade="all, delete-orphan")
     experience = relationship("Experience", back_populates="user", cascade="all, delete-orphan")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"{self.object_as_dict()}"
 
     def object_as_dict(self) -> dict:
@@ -55,7 +55,7 @@ class SkillName(Base):
 
     users = relationship("SkillUser", back_populates="skill")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"'{self.skill_name}'"
 
 
@@ -70,7 +70,7 @@ class Experience(Base):
 
     user = relationship("User", back_populates="experience")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"{self.object_as_dict()}"
 
     def object_as_dict(self) -> dict:
