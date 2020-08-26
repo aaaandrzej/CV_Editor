@@ -4,3 +4,4 @@ venv
 *.sqlite
 *.sqlite-journal
 _temp*
+*.env
