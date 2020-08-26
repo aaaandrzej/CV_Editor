@@ -5,3 +5,4 @@ venv
 *.sqlite-journal
 _temp*
 *.env
+.pytest_cache
