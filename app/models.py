@@ -10,7 +10,7 @@ class SkillUser(Base):
 
     user_id = Column(Integer, ForeignKey('user.id'), primary_key=True)
     skill_id = Column(Integer, ForeignKey('skill.id'), primary_key=True)
-    skill_level = Column(Integer())
+    skill_level = Column(Integer)
 
     skill = relationship('SkillName', back_populates='users', lazy='joined')
     user = relationship('User', back_populates='skills', lazy='joined')
@@ -28,10 +28,10 @@ class SkillUser(Base):
 class User(Base):
     __tablename__ = 'user'
     id = Column(Integer, primary_key=True)
-    username = Column(String)
-    password = Column(String)
-    firstname = Column(String)
-    lastname = Column(String)
+    username = Column(String(64))
+    password = Column(String(64))
+    firstname = Column(String(64))
+    lastname = Column(String(64))
 
     skills = relationship('SkillUser', back_populates='user', cascade='all, delete-orphan', lazy='selectin')
     experience = relationship('Experience', back_populates='user', cascade='all, delete-orphan', lazy='joined')
@@ -51,7 +51,7 @@ class User(Base):
 class SkillName(Base):
     __tablename__ = 'skill'
     id = Column(Integer, primary_key=True)
-    skill_name = Column(String(), nullable=False, unique=True)
+    skill_name = Column(String(64), nullable=False, unique=True)
 
     users = relationship('SkillUser', back_populates='skill')
 
@@ -64,8 +64,8 @@ class Experience(Base):
 
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('user.id'))
-    company = Column(String)
-    project = Column(String)
+    company = Column(String(64))
+    project = Column(String(64))
     duration = Column(Integer)
 
     user = relationship('User', back_populates='experience')
