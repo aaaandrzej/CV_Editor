@@ -1,13 +1,21 @@
+26/08/2020
 
-19/08/2020
+MySQL migration
 
-migracja do postrgesql
+Multi table queries 
+Aggregation queries 
 
-tuning istniejacych endpointow, zwlaszcza put
+Input data error handling 
+Pytest (mock, patch, parametrize, fixture) 
+Behave (component tests) 
 
-endpoint do statystyk zbiorczych
+Using packet manager (poetry) 
+Creating docker image of an application 
+Application deployment in ECS using RDS 
+Lambda preparing and deployment using API Gateway and RDS 
 
-autentykacja - za każdym razem jak ktoś uderza w endpoint mamy weryfikować czy on to może zrobić - uderzyć do bazy, sprawdzić ciastko, jeśli nie ma, to przekierować do loginu - a login sprawdza w bazie i ustawia ciastko - to jest ładnie opisane w tutorialu do flaska
+Using AWS services with boto3 (SSM, Secrets Manager) 
+Mocking AWS services with moto and localstack 
+Terraform introduction - optional 
 
-testy - pytest
-
+authorization and authentication (API key, JWT) 
