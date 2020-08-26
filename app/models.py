@@ -33,7 +33,7 @@ class User(Base):
     firstname = Column(String)
     lastname = Column(String)
 
-    skills = relationship('SkillUser', back_populates='user', cascade='all, delete-orphan', lazy='joined')
+    skills = relationship('SkillUser', back_populates='user', cascade='all, delete-orphan', lazy='selectin')
     experience = relationship('Experience', back_populates='user', cascade='all, delete-orphan', lazy='joined')
 
     def __repr__(self) -> str:

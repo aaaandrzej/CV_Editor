@@ -22,7 +22,7 @@ def api_cv_get() -> Response:
 
     session = get_session()
 
-    all_db_records = [user.object_as_dict() for user in session.query(User)]  # TODO ANDRZEJ - spr czy nie wystepuje n+1
+    all_db_records = [user.object_as_dict() for user in session.query(User)]
 
     return jsonify(all_db_records)
 
@@ -95,6 +95,8 @@ def api_cv_id_put(id: int) -> Tuple[str, int]:
     else:
         cv_being_updated.username = ""
 
+# TODO Piotr, to wyżej czy cv_being_updated.username = json_data['username'] if 'username' in json_data else "" ?
+
     if 'password' in json_data:
         cv_being_updated.password = json_data['password']
     else:
@@ -142,7 +144,9 @@ def api_cv_stats() -> Response:
     session = get_session()
 
     users_with_skill_set = session.query(User).join(SkillUser).join(SkillName).filter(
-        SkillName.skill_name == skill_name).filter(SkillUser.skill_level == skill_level).all()
+        SkillName.skill_name == skill_name,
+        SkillUser.skill_level == skill_level
+    ).all()
 
     return jsonify([user.object_as_dict() for user in users_with_skill_set])
 
