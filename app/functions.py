@@ -1,4 +1,4 @@
-from models import SkillUser, SkillName, Experience, User
+from app.models import SkillUser, SkillName, Experience, User
 from sqlalchemy.orm import Session
 
 

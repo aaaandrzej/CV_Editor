@@ -1,8 +1,8 @@
 from flask import Flask, request, jsonify, Response, make_response
 from typing import Tuple
-from models import User, SkillUser, SkillName
-from session import get_session
-from functions import replace_skills_with_json, replace_experience_with_json
+from app.models import User, SkillUser, SkillName
+from app.session import get_session
+from app.functions import replace_skills_with_json, replace_experience_with_json
 
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
@@ -141,16 +141,8 @@ def api_cv_stats() -> Response:
 
     session = get_session()
 
-    users_with_skill_name = session.query(User).join(SkillUser).join(SkillName).filter(
-        SkillName.skill_name == skill_name).all()  # TODO to dziala dla SkillName ale dla SkillUser nie chce
-
-    users_with_skill_set = users_with_skill_name
-
-    for user in users_with_skill_set:
-        if {'skill_name': skill_name, 'skill_level': skill_level} not in [skill_name.object_as_dict() for skill_name in
-                                                                          user.skills]:
-
-            users_with_skill_set.remove(user)
+    users_with_skill_set = session.query(User).join(SkillUser).join(SkillName).filter(
+        SkillName.skill_name == skill_name).filter(SkillUser.skill_level == skill_level).all()
 
     return jsonify([user.object_as_dict() for user in users_with_skill_set])
 
