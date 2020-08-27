@@ -89,18 +89,8 @@ def api_cv_id_put(id: int) -> Tuple[str, int]:
     if cv_being_updated is None:
         return "", 404
 
-    # replace basic user's attributes:
-    if 'username' in json_data:
-        cv_being_updated.username = json_data['username']
-    else:
-        cv_being_updated.username = ""
-
-# TODO Piotr, to wyżej czy cv_being_updated.username = json_data['username'] if 'username' in json_data else "" ?
-
-    if 'password' in json_data:
-        cv_being_updated.password = json_data['password']
-    else:
-        cv_being_updated.password = ""
+    cv_being_updated.username = json_data.get('username', '')
+    cv_being_updated.password = json_data.get('password', '')
 
     cv_being_updated.firstname = json_data['firstname']
     cv_being_updated.lastname = json_data['lastname']
