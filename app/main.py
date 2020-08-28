@@ -141,5 +141,23 @@ def api_cv_stats() -> Response:
     return jsonify([user.object_as_dict() for user in users_with_skill_set])
 
 
+@app.route('/api/cv/stats/count', methods=['GET'])
+def api_cv_stats_count() -> Response:
+
+    # GET COUNT OF USERS WITH PROVIDED SKILL SET
+
+    skill_name = request.args.get('skill_name')
+    skill_level = int(request.args.get('skill_level'))
+
+    session = get_session()
+
+    count_users_with_skill_set = session.query(User).join(SkillUser).join(SkillName).filter(
+        SkillName.skill_name == skill_name,
+        SkillUser.skill_level == skill_level
+    ).count()
+
+    return make_response(f'{count_users_with_skill_set}')
+
+
 if __name__ == '__main__':
     app.run(debug=True)
