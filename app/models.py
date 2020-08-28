@@ -1,6 +1,9 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, column_property
+from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
+from sqlalchemy.sql import case
+
 
 Base = declarative_base()
 
@@ -46,6 +49,20 @@ class User(Base):
             'skills': [skill.object_as_dict() for skill in self.skills],
             'experience': [exp.object_as_dict() for exp in self.experience]
         }
+
+    # def skills_as_dict(self) -> dict:
+    #     skills_dict = {skill.skill.skill_name:skill.skill_level for skill in self.skills}
+    #     return skills_dict
+
+    # @hybrid_property
+    # def skills_as_dict(self) -> dict:
+    #     return {skill.skill.skill_name:skill.skill_level for skill in self.skills}
+
+    # @skills_dict.expression
+    # def skills_dict(cls):
+    #     return case({skill.skill.skill_name:skill.skill_level for skill in cls.skills})
+
+    # skills_dict = column_property({skill.skill.skill_name:skill.skill_level for skill in skills})
 
 
 class SkillName(Base):
