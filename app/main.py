@@ -38,10 +38,8 @@ def api_cv_post() -> Tuple[str, int]:
     # create new_cv object and map basic user data from json:
     new_cv = User()
 
-    if 'username' in json_data:
-        new_cv.username = json_data['username']
-    if 'password' in json_data:
-        new_cv.password = json_data['password']
+    new_cv.username = json_data.get('username', '')
+    new_cv.password = json_data.get('password', '')
 
     new_cv.firstname = json_data['firstname']
     new_cv.lastname = json_data['lastname']

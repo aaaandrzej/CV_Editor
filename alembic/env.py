@@ -11,13 +11,6 @@ from alembic import context
 # access to the values within the .ini file in use.
 config = context.config
 
-# here we allow ourselves to pass interpolation vars to alembic.ini
-# from the host env
-# section = config.config_ini_section
-# config.set_section_option(section, "DB_USER", os.environ.get("DB_USER"))
-# config.set_section_option(section, "DB_PASSWORD", os.environ.get("DB_PASSWORD"))
-# config.set_section_option(section, "DB_NAME", os.environ.get("DB_NAME"))
-
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
 fileConfig(config.config_file_name)
