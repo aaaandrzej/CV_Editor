@@ -32,14 +32,14 @@ DB_ROOT_USER = os.environ['DB_ROOT_USER']
 DB_ROOT_PASSWORD = os.environ['DB_ROOT_PASSWORD']
 DB_NAME = os.environ['DB_NAME']
 
+config.set_main_option('sqlalchemy.url', f'mysql+pymysql://{DB_ROOT_USER}:{DB_ROOT_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}')
 
-def get_url():
-    return f'mysql+pymysql://{DB_ROOT_USER}:{DB_ROOT_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}'
-
-
-url = get_url()
-config.set_main_option('sqlalchemy.url', url)
-
+# def get_url():
+#     return f'mysql+pymysql://{DB_ROOT_USER}:{DB_ROOT_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}'
+#
+#
+# url = get_url()
+# config.set_main_option('sqlalchemy.url', url)
 
 # original env.py code below
 def run_migrations_offline():

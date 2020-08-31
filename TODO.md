@@ -6,8 +6,17 @@ Multi table queries
 Aggregation queries 
 
 Input data error handling 
+    - zaimplementowac tylko dla post user
+    - walidowac dane wejsciowe pod katem poprawnosci - czy sa poprawne klucze
+    - nie moze byc 500 w zadnym wypadku
+    - w przypadku bledu zwracac 400 + json o wartosci {"error": "bad input data"}
+    - bledy nie moga byc luka bezpieczenstwa
+    
 Pytest (mock, patch, parametrize, fixture) 
+    - zaimplementowac tylko dla post user
+    
 Behave (component tests) 
+    - zaimplementowac tylko dla post user
 
 Using packet manager (poetry) 
 Creating docker image of an application 

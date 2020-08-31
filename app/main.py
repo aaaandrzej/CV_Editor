@@ -121,40 +121,38 @@ def api_cv_id_delete(id: int) -> Tuple[str, int]:
         return "", 404
 
 
-@app.route('/api/cv/stats', methods=['GET'])
+@app.route('/api/cv/stats', methods=['POST'])
 def api_cv_stats() -> Response:
 
     # GET CVs OF USERS WITH PROVIDED SKILL SET
 
-    skill_name = request.args.get('skill_name')
-    skill_level = int(request.args.get('skill_level'))
+    json_data = request.get_json()
 
     session = get_session()
 
     users_with_skill_set = session.query(User).join(SkillUser).join(SkillName).filter(
-        SkillName.skill_name == skill_name,
-        SkillUser.skill_level == skill_level
+        SkillName.skill_name == json_data['skill_name'],
+        SkillUser.skill_level == json_data['skill_level']
     ).all()
 
     return jsonify([user.object_as_dict() for user in users_with_skill_set])
 
 
-@app.route('/api/cv/stats/count', methods=['GET'])
+@app.route('/api/cv/stats/count', methods=['POST'])
 def api_cv_stats_count() -> Response:
 
     # GET COUNT OF USERS WITH PROVIDED SKILL SET
 
-    skill_name = request.args.get('skill_name')
-    skill_level = int(request.args.get('skill_level'))
+    json_data = request.get_json()
 
     session = get_session()
 
     count_users_with_skill_set = session.query(User).join(SkillUser).join(SkillName).filter(
-        SkillName.skill_name == skill_name,
-        SkillUser.skill_level == skill_level
+        SkillName.skill_name == json_data['skill_name'],
+        SkillUser.skill_level == json_data['skill_level']
     ).count()
 
-    return make_response(f'{count_users_with_skill_set}')
+    return make_response({'number_of_users_with_skill':count_users_with_skill_set})
 
 
 if __name__ == '__main__':
