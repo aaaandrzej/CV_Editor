@@ -169,7 +169,7 @@ def api_cv_stats_count() -> Response:
     session = get_session()
 
     sql = ('''
-        SELECT u.firstname, u.lastname
+        SELECT COUNT u
         FROM (
             SELECT q.user_id, COUNT(*) as count
             FROM (
