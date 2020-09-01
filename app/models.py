@@ -25,7 +25,7 @@ class SkillUser(Base):
         }
 
     def __repr__(self) -> str:
-        return f"{self.object_as_dict()}"
+        return f'{self.object_as_dict()}'
 
 
 class User(Base):
@@ -40,7 +40,7 @@ class User(Base):
     experience = relationship('Experience', back_populates='user', cascade='all, delete-orphan', lazy='joined')
 
     def __repr__(self) -> str:
-        return f"{self.object_as_dict()}"
+        return f'{self.object_as_dict()}'
 
     def object_as_dict(self) -> dict:
         return {
@@ -49,20 +49,6 @@ class User(Base):
             'skills': [skill.object_as_dict() for skill in self.skills],
             'experience': [exp.object_as_dict() for exp in self.experience]
         }
-
-    # def skills_as_dict(self) -> dict:
-    #     skills_dict = {skill.skill.skill_name:skill.skill_level for skill in self.skills}
-    #     return skills_dict
-
-    # @hybrid_property
-    # def skills_as_dict(self) -> dict:
-    #     return {skill.skill.skill_name:skill.skill_level for skill in self.skills}
-
-    # @skills_dict.expression
-    # def skills_dict(cls):
-    #     return case({skill.skill.skill_name:skill.skill_level for skill in cls.skills})
-
-    # skills_dict = column_property({skill.skill.skill_name:skill.skill_level for skill in skills})
 
 
 class SkillName(Base):
@@ -73,7 +59,7 @@ class SkillName(Base):
     users = relationship('SkillUser', back_populates='skill')
 
     def __repr__(self) -> str:
-        return f"'{self.skill_name}'"
+        return f'{self.skill_name}'
 
 
 class Experience(Base):
@@ -88,7 +74,7 @@ class Experience(Base):
     user = relationship('User', back_populates='experience')
 
     def __repr__(self) -> str:
-        return f"{self.object_as_dict()}"
+        return f'{self.object_as_dict()}'
 
     def object_as_dict(self) -> dict:
         return {

@@ -34,3 +34,23 @@ def replace_experience_with_json(cv: User, json_data: dict) -> None:
             duration=json_exp['duration']
         ) for json_exp in json_data.get('experience', [])
     ]
+
+
+def parse_params(json: dict) -> dict:
+    params ={}
+    n = 1
+    for skill in json:
+        param = {f'param{n}': tuple((skill['skill_name'], skill['skill_level']))}
+        params.update(param)
+        n += 1
+    params.update({'count': len(json)})
+    return params
+
+
+def create_param_subs(json: dict) -> str:
+    n = 1
+    param_subs = ''
+    for _ in json:
+        param_subs = param_subs + ':param' + str(n) + ', '
+        n += 1
+    return param_subs[:-2]

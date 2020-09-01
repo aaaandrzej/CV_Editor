@@ -1,8 +1,8 @@
 from flask import Flask, request, jsonify, Response, make_response
 from typing import Tuple
-from app.models import User, SkillUser, SkillName
+from app.models import User
 from app.session import get_session
-from app.functions import replace_skills_with_json, replace_experience_with_json
+from app.functions import replace_skills_with_json, replace_experience_with_json, parse_params, create_param_subs
 
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
@@ -10,7 +10,7 @@ app.config['JSON_SORT_KEYS'] = False
 
 @app.route('/')
 def index() -> Response:
-    msg = "For API please use /api/cv or /api/cv/<id>"
+    msg = 'For API please use /api/cv or /api/cv/<id>'
     return Response(msg, mimetype='text/plain')
 
 
@@ -53,7 +53,7 @@ def api_cv_post() -> Tuple[str, int]:
     session.add(new_cv)
     session.commit()
 
-    return "", 201
+    return '', 201
 
 
 @app.route('/api/cv/<id>', methods=['GET'])
@@ -85,7 +85,7 @@ def api_cv_id_put(id: int) -> Tuple[str, int]:
     cv_being_updated = session.query(User).get(id)
 
     if cv_being_updated is None:
-        return "", 404
+        return '', 404
 
     cv_being_updated.username = json_data.get('username', '')
     cv_being_updated.password = json_data.get('password', '')
@@ -99,7 +99,7 @@ def api_cv_id_put(id: int) -> Tuple[str, int]:
 
     session.commit()
 
-    return "", 200
+    return '', 200
 
 
 @app.route('/api/cv/<id>', methods=['DELETE'])
@@ -115,10 +115,10 @@ def api_cv_id_delete(id: int) -> Tuple[str, int]:
         session.delete(cv_to_be_deleted)
         session.commit()
 
-        return "", 204
+        return '', 204
 
     else:
-        return "", 404
+        return '', 404
 
 
 @app.route('/api/cv/stats', methods=['POST'])
@@ -130,12 +130,33 @@ def api_cv_stats() -> Response:
 
     session = get_session()
 
-    users_with_skill_set = session.query(User).join(SkillUser).join(SkillName).filter(
-        SkillName.skill_name == json_data['skill_name'],
-        SkillUser.skill_level == json_data['skill_level']
-    ).all()
+    sql = ('''
+        SELECT u.firstname, u.lastname
+        FROM (
+            SELECT q.user_id, COUNT(*) as count
+            FROM (
+                SELECT su.user_id, s.skill_name, su.skill_level
+                FROM skill_user su
+                JOIN skill s on su.skill_id = s.id
+                WHERE (s.skill_name, su.skill_level) IN (%s)''' % create_param_subs(json_data) + '''
+                ) q
+                GROUP BY q.user_id
+            ) r
+        JOIN user u ON r.user_id = u.id
+        WHERE r.count = :count''')
 
-    return jsonify([user.object_as_dict() for user in users_with_skill_set])
+    params = parse_params(json_data)
+
+    result = session.execute(sql, params).fetchall()
+
+    users_with_skill_set =[]
+
+    for row in result:
+        user = {'firstname': row.firstname, 'lastname': row.lastname}
+        print(user)
+        users_with_skill_set.append(user)
+
+    return jsonify(users_with_skill_set)
 
 
 @app.route('/api/cv/stats/count', methods=['POST'])
@@ -147,12 +168,26 @@ def api_cv_stats_count() -> Response:
 
     session = get_session()
 
-    count_users_with_skill_set = session.query(User).join(SkillUser).join(SkillName).filter(
-        SkillName.skill_name == json_data['skill_name'],
-        SkillUser.skill_level == json_data['skill_level']
-    ).count()
+    sql = ('''
+        SELECT u.firstname, u.lastname
+        FROM (
+            SELECT q.user_id, COUNT(*) as count
+            FROM (
+                SELECT su.user_id, s.skill_name, su.skill_level
+                FROM skill_user su
+                JOIN skill s on su.skill_id = s.id
+                WHERE (s.skill_name, su.skill_level) IN (%s)''' % create_param_subs(json_data) + '''
+                ) q
+                GROUP BY q.user_id
+            ) r
+        JOIN user u ON r.user_id = u.id
+        WHERE r.count = :count''')
 
-    return make_response({'number_of_users_with_skill':count_users_with_skill_set})
+    params = parse_params(json_data)
+
+    result = session.execute(sql, params).fetchall()
+
+    return make_response({'number_of_users_with_skill_set': len(result)})
 
 
 if __name__ == '__main__':
