@@ -27,4 +27,4 @@ Using AWS services with boto3 (SSM, Secrets Manager)
 Mocking AWS services with moto and localstack 
 Terraform introduction - optional 
 
-authorization and authentication (API key, JWT) 
+Authorization and authentication (API key, JWT) 
