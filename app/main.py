@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify, Response, make_response
+from sqlalchemy.exc import OperationalError
 from typing import Tuple
 from app.models import User
 from app.session import get_session
@@ -36,6 +37,7 @@ def api_cv_post() -> Tuple[dict, int]:
     # ADD NEW CV BASED ON JSON DATA
 
     error_response = {'error': 'bad input data'}, 400
+    db_error_response = {'error': 'database error'}, 503
     success_response = {'success': 'item added'}, 201
 
     json_data = request.get_json()
@@ -48,6 +50,11 @@ def api_cv_post() -> Tuple[dict, int]:
             return error_response
 
     session = get_session()
+
+    # if session.connection():
+    #     return "session"
+    # else:
+    #     return "no session"
 
     # create new_cv object and map basic user data from json:
     new_cv = User()
@@ -63,6 +70,9 @@ def api_cv_post() -> Tuple[dict, int]:
 
     except KeyError:
         return error_response
+
+    except OperationalError:
+        return db_error_response
 
     session.add(new_cv)
     session.commit()
