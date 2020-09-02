@@ -51,11 +51,6 @@ def api_cv_post() -> Tuple[dict, int]:
 
     session = get_session()
 
-    # if session.connection():
-    #     return "session"
-    # else:
-    #     return "no session"
-
     # create new_cv object and map basic user data from json:
     new_cv = User()
 
