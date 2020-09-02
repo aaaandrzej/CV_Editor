@@ -1,9 +1,4 @@
-26/08/2020
-
-MySQL migration
-
-Multi table queries 
-Aggregation queries 
+2/09/2020
 
 Input data error handling 
     - zaimplementowac tylko dla post user
