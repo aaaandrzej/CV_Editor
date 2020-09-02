@@ -1,5 +1,6 @@
 from app.models import SkillUser, SkillName, Experience, User
 from sqlalchemy.orm import Session
+from typing import List
 
 
 def replace_skills_with_json(session: Session, cv: User, json_data: dict) -> None:
@@ -36,21 +37,11 @@ def replace_experience_with_json(cv: User, json_data: dict) -> None:
     ]
 
 
-def parse_params(json: dict) -> dict:
-    params ={}
-    n = 1
-    for skill in json:
-        param = {f'param{n}': tuple((skill['skill_name'], skill['skill_level']))}
-        params.update(param)
-        n += 1
-    params.update({'count': len(json)})
+def parse_params(json: List[dict]) -> dict:
+    params = {f'param{n}': (skill['skill_name'], skill['skill_level']) for n, skill in enumerate(json)}
+    params['count'] = len(json)
     return params
 
 
-def create_param_subs(json: dict) -> str:
-    n = 1
-    param_subs = ''
-    for _ in json:
-        param_subs = param_subs + ':param' + str(n) + ', '
-        n += 1
-    return param_subs[:-2]
+def create_param_subs(json: List[dict]) -> str:
+    return ', '.join(f':param{n}' for n in range(len(json)))

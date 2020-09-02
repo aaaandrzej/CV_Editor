@@ -3,6 +3,8 @@ from typing import Tuple
 from app.models import User
 from app.session import get_session
 from app.functions import replace_skills_with_json, replace_experience_with_json, parse_params, create_param_subs
+from app.sql_queries import SQL_COUNT, SQL_STATS
+
 
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
@@ -130,31 +132,13 @@ def api_cv_stats() -> Response:
 
     session = get_session()
 
-    sql = ('''
-        SELECT u.firstname, u.lastname
-        FROM (
-            SELECT q.user_id, COUNT(*) as count
-            FROM (
-                SELECT su.user_id, s.skill_name, su.skill_level
-                FROM skill_user su
-                JOIN skill s on su.skill_id = s.id
-                WHERE (s.skill_name, su.skill_level) IN (%s)''' % create_param_subs(json_data) + '''
-                ) q
-                GROUP BY q.user_id
-            ) r
-        JOIN user u ON r.user_id = u.id
-        WHERE r.count = :count''')
+    sql = SQL_STATS.format(subs=create_param_subs(json_data))
 
     params = parse_params(json_data)
 
     result = session.execute(sql, params).fetchall()
 
-    users_with_skill_set =[]
-
-    for row in result:
-        user = {'firstname': row.firstname, 'lastname': row.lastname}
-        print(user)
-        users_with_skill_set.append(user)
+    users_with_skill_set = [{'firstname': user.firstname, 'lastname': user.lastname} for user in result]
 
     return jsonify(users_with_skill_set)
 
@@ -168,26 +152,13 @@ def api_cv_stats_count() -> Response:
 
     session = get_session()
 
-    sql = ('''
-        SELECT COUNT u
-        FROM (
-            SELECT q.user_id, COUNT(*) as count
-            FROM (
-                SELECT su.user_id, s.skill_name, su.skill_level
-                FROM skill_user su
-                JOIN skill s on su.skill_id = s.id
-                WHERE (s.skill_name, su.skill_level) IN (%s)''' % create_param_subs(json_data) + '''
-                ) q
-                GROUP BY q.user_id
-            ) r
-        JOIN user u ON r.user_id = u.id
-        WHERE r.count = :count''')
+    sql = SQL_COUNT.format(subs=create_param_subs(json_data))
 
     params = parse_params(json_data)
 
-    result = session.execute(sql, params).fetchall()
+    result = session.execute(sql, params).scalar()
 
-    return make_response({'number_of_users_with_skill_set': len(result)})
+    return make_response({'number_of_users_with_skill_set': result})
 
 
 if __name__ == '__main__':
