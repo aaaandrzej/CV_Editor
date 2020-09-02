@@ -1,3 +1,5 @@
+import os
+
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
@@ -24,7 +26,15 @@ target_metadata = Base.metadata
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
 
+DB_HOST = os.environ['DB_HOST']
+DB_PORT = os.environ['DB_PORT']
+DB_ROOT_USER = os.environ['DB_ROOT_USER']
+DB_ROOT_PASSWORD = os.environ['DB_ROOT_PASSWORD']
+DB_NAME = os.environ['DB_NAME']
 
+config.set_main_option('sqlalchemy.url', f'mysql+pymysql://{DB_ROOT_USER}:{DB_ROOT_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}')
+
+# original env.py code below
 def run_migrations_offline():
     """Run migrations in 'offline' mode.
 

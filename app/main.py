@@ -1,25 +1,29 @@
-from flask import Flask, request, jsonify, Response
+from flask import Flask, request, jsonify, Response, make_response
+from typing import Tuple
+from app.models import User
+from app.session import get_session
+from app.functions import replace_skills_with_json, replace_experience_with_json, parse_params, create_param_subs
+from app.sql_queries import SQL_COUNT, SQL_STATS
 
-from models import User, SkillUser, SkillName, Experience
-from session import get_session
-
-import json
-
-session = get_session(echo=False)
 
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
 
 
 @app.route('/')
-def index():
-    msg = "For API please use /api/cv or /api/cv/<id>"
+def index() -> Response:
+    msg = 'For API please use /api/cv or /api/cv/<id>'
     return Response(msg, mimetype='text/plain')
 
 
 @app.route('/api/cv', methods=['GET'])
 @app.route('/api/cv/', methods=['GET'])
-def api_cv_get():
+def api_cv_get() -> Response:
+
+    # GET ALL CVs
+
+    session = get_session()
+
     all_db_records = [user.object_as_dict() for user in session.query(User)]
 
     return jsonify(all_db_records)
@@ -27,7 +31,7 @@ def api_cv_get():
 
 @app.route('/api/cv', methods=['POST'])
 @app.route('/api/cv/', methods=['POST'])
-def api_cv_post():
+def api_cv_post() -> Tuple[str, int]:
 
     # ADD NEW CV BASED ON JSON DATA
 
@@ -36,116 +40,76 @@ def api_cv_post():
     # create new_cv object and map basic user data from json:
     new_cv = User()
 
-    if "username" in json_data:
-        new_cv.username = json_data["username"]
-    if "password" in json_data:
-        new_cv.password = json_data["password"]
+    new_cv.username = json_data.get('username', '')
+    new_cv.password = json_data.get('password', '')
 
-    new_cv.firstname = json_data["firstname"]
-    new_cv.lastname = json_data["lastname"]
+    new_cv.firstname = json_data['firstname']
+    new_cv.lastname = json_data['lastname']
 
-    # add skills from json to new_cv object, if skills were provided:
-    for skill in json_data.get('skills', []):
+    session = get_session()
 
-        # check if skill_name already exists
-        skill_name_obj = session.query(SkillName).filter_by(skill_name=skill["skill_name"]).first()
+    replace_skills_with_json(session, new_cv, json_data)
 
-        if not skill_name_obj:
-            skill_name_obj = SkillName(skill_name=skill["skill_name"])
-            session.add(skill_name_obj)
-
-        skill_object = SkillUser()
-        skill_object.skill = skill_name_obj
-        skill_object.skill_level = skill["skill_level"]
-
-        new_cv.skills.append(skill_object)
-
-    # add experience from json to new_cv object, if experience was provided:
-    for exp in json_data.get('experience', []):
-
-        exp_object = Experience()
-        exp_object.company = exp["company"]
-        exp_object.project = exp["project"]
-        exp_object.duration = exp["duration"]
-
-        new_cv.experience.append(exp_object)
+    replace_experience_with_json(new_cv, json_data)
 
     session.add(new_cv)
     session.commit()
 
-    return "", 201
+    return '', 201
 
 
 @app.route('/api/cv/<id>', methods=['GET'])
-def api_cv_id_get(id=None):
+def api_cv_id_get(id: int) -> Response:
+
+    # GET ONE CV OF ID [id]
+
+    session = get_session()
+
     one_db_record = session.query(User).get(id)
 
     try:
-        response = json.dumps(one_db_record.object_as_dict())
+        response = jsonify(one_db_record.object_as_dict())
         return response
 
     except AttributeError:
-        return "", 404
+        return make_response('', 404)
 
 
 @app.route('/api/cv/<id>', methods=['PUT'])
-def api_cv_id_put(id=None):
+def api_cv_id_put(id: int) -> Tuple[str, int]:
 
     # UPDATE CV OF ID [id] WITH JSON DATA
 
     json_data = request.get_json()
 
+    session = get_session()
+
     cv_being_updated = session.query(User).get(id)
 
     if cv_being_updated is None:
-        return "", 404
+        return '', 404
 
-    print(cv_being_updated)
+    cv_being_updated.username = json_data.get('username', '')
+    cv_being_updated.password = json_data.get('password', '')
 
-    # update basic user's attributes:
-    for key, value in json_data.items():
-        if key not in ["skills", "experience"]:
-            setattr(cv_being_updated, key, value)
+    cv_being_updated.firstname = json_data['firstname']
+    cv_being_updated.lastname = json_data['lastname']
 
-    # overwrite user's skills (will be redesigned in future):
-    if "skills" in json_data.keys():
+    replace_skills_with_json(session, cv_being_updated, json_data)
 
-        cv_being_updated.skills = []
-
-        for json_skill in json_data.get('skills', []):
-
-            skill_name_obj = session.query(SkillName).filter_by(skill_name=json_skill["skill_name"]).first()
-
-            if not skill_name_obj:
-                skill_name_obj = SkillName(skill_name=json_skill["skill_name"])
-                session.add(skill_name_obj)
-
-            skill_object = SkillUser()
-            skill_object.skill = skill_name_obj
-            skill_object.skill_level = json_skill["skill_level"]
-
-            cv_being_updated.skills.append(skill_object)
-
-    # overwrite user's experience (will be redesigned in future):
-    if "experience" in json_data.keys():
-
-        cv_being_updated.experience = []
-
-        for json_exp in json_data.get('experience', []):
-            exp_object = Experience()
-            exp_object.company = json_exp["company"]
-            exp_object.project = json_exp["project"]
-            exp_object.duration = json_exp["duration"]
-
-            cv_being_updated.experience.append(exp_object)
+    replace_experience_with_json(cv_being_updated, json_data)
 
     session.commit()
 
-    return "", 200
+    return '', 200
 
 
 @app.route('/api/cv/<id>', methods=['DELETE'])
-def api_cv_id_delete(id=None):
+def api_cv_id_delete(id: int) -> Tuple[str, int]:
+
+    # DELETE CV OF ID [id]
+
+    session = get_session()
 
     cv_to_be_deleted = session.query(User).get(id)
 
@@ -153,10 +117,48 @@ def api_cv_id_delete(id=None):
         session.delete(cv_to_be_deleted)
         session.commit()
 
-        return "", 204
+        return '', 204
 
     else:
-        return "", 404
+        return '', 404
+
+
+@app.route('/api/cv/stats', methods=['POST'])
+def api_cv_stats() -> Response:
+
+    # GET CVs OF USERS WITH PROVIDED SKILL SET
+
+    json_data = request.get_json()
+
+    session = get_session()
+
+    sql = SQL_STATS.format(subs=create_param_subs(json_data))
+
+    params = parse_params(json_data)
+
+    result = session.execute(sql, params).fetchall()
+
+    users_with_skill_set = [{'firstname': user.firstname, 'lastname': user.lastname} for user in result]
+
+    return jsonify(users_with_skill_set)
+
+
+@app.route('/api/cv/stats/count', methods=['POST'])
+def api_cv_stats_count() -> Response:
+
+    # GET COUNT OF USERS WITH PROVIDED SKILL SET
+
+    json_data = request.get_json()
+
+    session = get_session()
+
+    sql = SQL_COUNT.format(subs=create_param_subs(json_data))
+
+    params = parse_params(json_data)
+
+    result = session.execute(sql, params).scalar()
+
+    return make_response({'number_of_users_with_skill_set': result})
 
 
 if __name__ == '__main__':
