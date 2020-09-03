@@ -1,10 +1,12 @@
 from flask import Flask, request, jsonify, Response, make_response
+from werkzeug.exceptions import BadRequest
+from sqlalchemy.exc import DataError
 from typing import Tuple
 from app.models import User
 from app.session import get_session
-from app.functions import replace_skills_with_json, replace_experience_with_json, parse_params, create_param_subs
+from app.functions import replace_skills_with_json, replace_experience_with_json, parse_params, create_param_subs, \
+    error_response
 from app.sql_queries import SQL_COUNT, SQL_STATS
-
 
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
@@ -19,7 +21,6 @@ def index() -> Response:
 @app.route('/api/cv', methods=['GET'])
 @app.route('/api/cv/', methods=['GET'])
 def api_cv_get() -> Response:
-
     # GET ALL CVs
 
     session = get_session()
@@ -31,36 +32,41 @@ def api_cv_get() -> Response:
 
 @app.route('/api/cv', methods=['POST'])
 @app.route('/api/cv/', methods=['POST'])
-def api_cv_post() -> Tuple[str, int]:
-
+def api_cv_post() -> Tuple[dict, int]:
     # ADD NEW CV BASED ON JSON DATA
-
-    json_data = request.get_json()
-
-    # create new_cv object and map basic user data from json:
-    new_cv = User()
-
-    new_cv.username = json_data.get('username', '')
-    new_cv.password = json_data.get('password', '')
-
-    new_cv.firstname = json_data['firstname']
-    new_cv.lastname = json_data['lastname']
 
     session = get_session()
 
-    replace_skills_with_json(session, new_cv, json_data)
+    try:
+        json_data = request.get_json()
 
-    replace_experience_with_json(new_cv, json_data)
+    except BadRequest as ex:
+        return error_response('bad input data', 400, ex)
+
+    new_cv = User()
+
+    try:
+        new_cv.username = json_data.get('username', '')
+        new_cv.password = json_data.get('password', '')
+        new_cv.firstname = json_data['firstname']
+        new_cv.lastname = json_data['lastname']
+        replace_skills_with_json(session, new_cv, json_data)
+        replace_experience_with_json(new_cv, json_data)
+    except (KeyError, TypeError, AttributeError) as ex:
+        return error_response('bad input data', 400, ex)
 
     session.add(new_cv)
-    session.commit()
 
-    return '', 201
+    try:
+        session.commit()
+    except DataError as ex:
+        return error_response('bad input data', 400, ex)
+
+    return {'success': 'item added'}, 201
 
 
 @app.route('/api/cv/<id>', methods=['GET'])
 def api_cv_id_get(id: int) -> Response:
-
     # GET ONE CV OF ID [id]
 
     session = get_session()
@@ -77,7 +83,6 @@ def api_cv_id_get(id: int) -> Response:
 
 @app.route('/api/cv/<id>', methods=['PUT'])
 def api_cv_id_put(id: int) -> Tuple[str, int]:
-
     # UPDATE CV OF ID [id] WITH JSON DATA
 
     json_data = request.get_json()
@@ -106,7 +111,6 @@ def api_cv_id_put(id: int) -> Tuple[str, int]:
 
 @app.route('/api/cv/<id>', methods=['DELETE'])
 def api_cv_id_delete(id: int) -> Tuple[str, int]:
-
     # DELETE CV OF ID [id]
 
     session = get_session()
@@ -125,7 +129,6 @@ def api_cv_id_delete(id: int) -> Tuple[str, int]:
 
 @app.route('/api/cv/stats', methods=['POST'])
 def api_cv_stats() -> Response:
-
     # GET CVs OF USERS WITH PROVIDED SKILL SET
 
     json_data = request.get_json()
@@ -145,7 +148,6 @@ def api_cv_stats() -> Response:
 
 @app.route('/api/cv/stats/count', methods=['POST'])
 def api_cv_stats_count() -> Response:
-
     # GET COUNT OF USERS WITH PROVIDED SKILL SET
 
     json_data = request.get_json()
