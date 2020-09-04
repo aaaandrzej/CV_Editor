@@ -51,7 +51,7 @@ def mock_json_data_incorrect_exp():
 @pytest.fixture
 def db_credentials(monkeypatch):
     monkeypatch.setenv('DB_HOST', 'some_host')
-    monkeypatch.setenv('DB_PORT', 3306)
+    monkeypatch.setenv('DB_PORT', '3306')
     monkeypatch.setenv('DB_ROOT_PASSWORD', 'testing')
     monkeypatch.setenv('DB_ROOT_USER', 'testing')
     monkeypatch.setenv('DB_USER', 'testing')
