@@ -1,4 +1,4 @@
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 from flask import request, session
 import pytest
 from app.models import User, SkillUser, SkillName, Experience
@@ -30,14 +30,53 @@ def test_api_cv_post_no_db_error(app):
 # @patch('app.main.User')
 # @patch('app.main.replace_skills_with_json')
 # @patch('app.main.replace_experience_with_json')
-def test_api_cv_post_valid_json(app, api_cv_post):
+def test_api_cv_post_valid_json__incomplete_test(app, api_cv_post):
     with app.test_client() as c:
         rv = c.post('/api/cv', json={'a_key': 'a value'})
         json_data = request.get_json()
+
         # actual = api_cv_post()
 
         assert json_data == {'a_key': 'a value'}
 
+
+@pytest.mark.skip('WIP')
+# @patch('app.main.get_session')
+# @patch('app.main.User')
+# @patch('app.main.replace_skills_with_json')
+# @patch('app.main.replace_experience_with_json')
+def test_api_cv_post_valid_json(app, api_cv_post):
+    with app.test_client() as c:
+        rv = c.post('/api/cv', json={
+            "firstname": "Test",
+            "lastname": "User",
+            "skills": [
+                {
+                    "skill_name": "skill1",
+                    "skill_level": 1
+                },
+                {
+                    "skill_name": "skill2",
+                    "skill_level": 2
+                }
+            ],
+            "experience": [
+                {
+                    "company": "Firma",
+                    "project": "Project",
+                    "duration": 5
+                }
+            ]
+        })
+        json_data = request.get_json()
+
+        session = MagicMock()
+        # get_session_mock =
+        # user_mock.return_value = User()
+
+        actual = api_cv_post()
+        expected = ({'success': 'item added'}, 201)
+        assert actual == expected
 
 
 @pytest.mark.skip('WIP')
