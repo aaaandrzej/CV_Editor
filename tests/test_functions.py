@@ -9,19 +9,19 @@ def test_replace_skills_with_json(mock_json_data_correct):
     pass
 
 
-def test_replace_experience_with_json_success(mock_json_data_correct):
+def test_replace_experience_with_json_success(mock_json_data_correct):  # TODO rozbudowac poprzez parametrize
     new_cv = User()
     replace_experience_with_json(new_cv, mock_json_data_correct)
     assert new_cv.experience[0].object_as_dict() == mock_json_data_correct['experience'][0]
 
 
-def test_replace_experience_with_json_empty(mock_json_data_no_exp):
+def test_replace_experience_with_json_empty(mock_json_data_no_exp):  # TODO wyrzucic do tej powyzej
     new_cv = User()
     replace_experience_with_json(new_cv, mock_json_data_no_exp)
     assert new_cv.experience == []
 
 
-def test_replace_experience_with_json_wrong_key(mock_json_data_incorrect_exp):
+def test_replace_experience_with_json_wrong_key(mock_json_data_incorrect_exp):  # TODO to nie ma sensu
     new_cv = User()
     with pytest.raises(KeyError):
         replace_experience_with_json(new_cv, mock_json_data_incorrect_exp)
@@ -41,7 +41,7 @@ def test_create_params_success(test_input, expected):
     assert create_param_subs(test_input) == expected
 
 
-def test_create_params_raises_error():  # ten test niczego szczegolnego nie testuje, ale chcialem zmusic ta funkcje do rzucenia bledu
+def test_create_params_raises_error():  # TODO ten test też nie ma sensu
     with pytest.raises(TypeError):
         create_param_subs(User())
 
