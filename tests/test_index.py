@@ -15,4 +15,4 @@ def client(app):
 
 def test_index_response(client):
     rv = client.get('/')
-    assert b'For API please use /api/cv or /api/cv/<id>' == rv.data
+    assert rv.data == b'For API please use /api/cv or /api/cv/<id>'

@@ -27,25 +27,18 @@ def test_api_cv_post_no_db_error(app):
     assert rv.data == b'{"error":"bad input data"}\n'
 
 
-# @patch('app.main.User')
-# @patch('app.main.replace_skills_with_json')
-# @patch('app.main.replace_experience_with_json')
-def test_api_cv_post_valid_json__incomplete_test(app, api_cv_post):
+def test_api_cv_post_request_get_json(app, api_cv_post):  # tutaj udało się dobić do request.get_json()
     with app.test_client() as c:
         rv = c.post('/api/cv', json={'a_key': 'a value'})
         json_data = request.get_json()
-
-        # actual = api_cv_post()
-
         assert json_data == {'a_key': 'a value'}
 
 
-@pytest.mark.skip('WIP')
-# @patch('app.main.get_session')
+@patch('app.main.get_session')
 # @patch('app.main.User')
 # @patch('app.main.replace_skills_with_json')
 # @patch('app.main.replace_experience_with_json')
-def test_api_cv_post_valid_json(app, api_cv_post):
+def test_api_post_cv_with_success(get_session_mock, api_cv_post, app):  # to teraz przechodzi, aż sam jestem w szoku
     with app.test_client() as c:
         rv = c.post('/api/cv', json={
             "firstname": "Test",
@@ -68,11 +61,8 @@ def test_api_cv_post_valid_json(app, api_cv_post):
                 }
             ]
         })
-        json_data = request.get_json()
 
-        session = MagicMock()
-        # get_session_mock =
-        # user_mock.return_value = User()
+        get_session_mock.return_value = MagicMock()
 
         actual = api_cv_post()
         expected = ({'success': 'item added'}, 201)
@@ -80,20 +70,8 @@ def test_api_cv_post_valid_json(app, api_cv_post):
 
 
 @pytest.mark.skip('WIP')
-@patch('app.main.get_session')
-@patch('app.main.request')
-@patch('app.main.User')
-@patch('app.main.replace_skills_with_json')
-@patch('app.main.replace_experience_with_json')
-def test_exception_when_no_json(replace_experience_with_json_mock, replace_skills_with_json_mock,
-                                request_mock, user_mock, get_session_mock, api_cv_post, app):
-    with app.test_client() as c:
-        rv = c.post('/api/cv', json={'firstname': 'sdfsf', 'lastname': 'dsds'})
-        json_data = rv.get_json()
-        # request_mock.get_json.return_value = {'firstname': 'sdfsf', 'lastname': 'dsds'}
-        actual = api_cv_post()
-        expected = ({'success': 'item added'}, 201)
-        assert actual == expected
+def test_exception_when_no_json(api_cv_post, app):
+    pass
 
 
 @pytest.mark.skip('WIP')
