@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, Response, make_response
 from werkzeug.exceptions import BadRequest
+from sqlalchemy.exc import OperationalError
 from sqlalchemy.exc import DataError
 from typing import Tuple
 from app.models import User
@@ -54,6 +55,8 @@ def api_cv_post() -> Tuple[dict, int]:
         replace_experience_with_json(new_cv, json_data)
     except (KeyError, TypeError, AttributeError) as ex:
         return error_response('bad input data', 400, ex)
+    except OperationalError as ex:  # TODO wiem, ze tak nie mialem robic, ale musze tu jakos obsluzyc brak bazy danych
+        return error_response('db error', 400, ex)
 
     session.add(new_cv)
 

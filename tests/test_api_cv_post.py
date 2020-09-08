@@ -1,7 +1,5 @@
-from unittest.mock import patch, MagicMock
-from flask import request, session
+from unittest.mock import patch
 import pytest
-from app.models import User, SkillUser, SkillName, Experience
 
 
 @pytest.fixture
@@ -16,92 +14,116 @@ def app(db_credentials):
     return app
 
 
-# @pytest.fixture
-# def client(app):
-#     with app.test_client() as client:
-#         return client
+@pytest.fixture
+def client(app):
+    with app.test_client() as client:
+        yield client
 
 
-def test_api_cv_post_no_db_error(app):
-    rv = app.test_client().post('/api/cv/', data='random data')
-    assert rv.data == b'{"error":"bad input data"}\n'
-
-
-def test_api_cv_post_request_get_json(app, api_cv_post):  # tutaj udało się dobić do request.get_json()
-    with app.test_client() as c:
-        rv = c.post('/api/cv', json={'a_key': 'a value'})
-        json_data = request.get_json()
-        assert json_data == {'a_key': 'a value'}
-
-
+@pytest.mark.parametrize('test_input', [{
+    "firstname": "Test",
+    "lastname": "1",
+    "skills": [],
+    "experience": []
+},
+    {
+        "firstname": "Second Test",
+        "lastname": "User",
+        "skills": [
+            {
+                "skill_name": "skill1",
+                "skill_level": 1
+            },
+            {
+                "skill_name": "skill2",
+                "skill_level": 2
+            }
+        ],
+        "experience": [
+            {
+                "company": "Firma",
+                "project": "Project",
+                "duration": 5
+            }
+        ]
+    },
+    {
+        "firstname": "3rd Test",
+        "lastname": "User",
+        "dummy_key": "doesn't matter",
+        "skills": [],
+        "experience": [
+            {
+                "company": "Firma",
+                "project": "Project",
+                "duration": 5
+            }
+        ]
+    }
+])
 @patch('app.main.get_session')
-# @patch('app.main.User')
-# @patch('app.main.replace_skills_with_json')
-# @patch('app.main.replace_experience_with_json')
-def test_api_post_cv_with_success(get_session_mock, api_cv_post, app):  # to teraz przechodzi, aż sam jestem w szoku
-    with app.test_client() as c:
-        rv = c.post('/api/cv', json={
-            "firstname": "Test",
-            "lastname": "User",
-            "skills": [
-                {
-                    "skill_name": "skill1",
-                    "skill_level": 1
-                },
-                {
-                    "skill_name": "skill2",
-                    "skill_level": 2
-                }
-            ],
-            "experience": [
-                {
-                    "company": "Firma",
-                    "project": "Project",
-                    "duration": 5
-                }
-            ]
-        })
+@patch('app.main.replace_skills_with_json')
+@patch('app.main.replace_experience_with_json')
+def test_api_post_cv_with_success(replace_experience_with_json_mock, replace_skills_with_json_mock,
+                                  get_session_mock, test_input, api_cv_post, client):
+    client.post('/api/cv', json=test_input)
 
-        get_session_mock.return_value = MagicMock()
+    # TODO nie wiem co tu podać, bo ta funkcja nic nie zwraca, aktualizuje tylko obiekt cv:
+    # replace_experience_with_json_mock.return_value =
+    # replace_skills_with_json_mock.return_value =
 
-        actual = api_cv_post()
-        expected = ({'success': 'item added'}, 201)
-        assert actual == expected
+    actual = api_cv_post()
+    expected = ({'success': 'item added'}, 201)
+    assert actual == expected
 
 
-@pytest.mark.skip('WIP')
-def test_exception_when_no_json(api_cv_post, app):
-    pass
+@pytest.mark.parametrize('test_input', [{
+    "lastname": "no firstname",
+    "skills": [],
+    "experience": []
+},
+    {
+        "firstname": "no skills",
+        "lastname": "User",
+        "experience": [
+            {
+                "company": "Firma",
+                "project": "Project",
+                "duration": 5
+            }
+        ]
+    },
+    {
+        "firstname": "no exp",
+        "lastname": "User",
+        "dummy_key": "doesn't matter",
+        "skills": []
+    },
+    {}
+])
+@patch('app.main.get_session')
+@patch('app.main.replace_skills_with_json')
+@patch('app.main.replace_experience_with_json')
+def test_api_post_cv_with_error(replace_experience_with_json_mock, replace_skills_with_json_mock,
+                                get_session_mock, test_input, api_cv_post, client):
+    client.post('/api/cv', json=test_input)
+
+    # TODO tak naprawdę to parametrize tu nie ma znaczenia, bo bez tego mocka poniżej funkcja endpointu daje sukces
+    replace_experience_with_json_mock.side_effect = KeyError
+    replace_skills_with_json_mock.side_effect = KeyError
+
+    actual = api_cv_post()
+    expected = ({'error': 'bad input data'}, 400)
+    assert actual == expected
 
 
-@pytest.mark.skip('WIP')
-def test_exception_when_no_key():
-    with pytest.raises(KeyError):
-        new_cv = User()
-        json_data = {'a': 1}
-        new_cv.firstname = json_data['firstname']
-        pass
-
-
-@pytest.mark.skip('WIP')
-def test_exception_when_wrong_json():
-    # raises AttributeError?
-    pass
-
-
-@pytest.mark.skip('WIP')
-def test_exception_when_TypeError___():
-    # hmm
-    pass
-
-
-@pytest.mark.skip('WIP')
-def test_exception_when_db_error():
-    # raises DataError
-    pass
-
-
-@pytest.mark.skip('WIP')
-def test_cv_added_on_success():
-    # assert {'success': 'item added'}, 201
-    pass
+def test_api_cv_post_no_db_error(client, api_cv_post, test_input={
+    "firstname": "Test",
+    "lastname": "User",
+    "skills": [],
+    "experience": []
+}):
+    client.post('/api/cv', json=test_input)
+    actual = api_cv_post()
+    expected = ({'error': 'db error'}, 400)
+    assert actual == expected

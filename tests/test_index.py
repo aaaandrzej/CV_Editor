@@ -10,7 +10,7 @@ def app(db_credentials):
 @pytest.fixture
 def client(app):
     with app.test_client() as client:
-        return client
+        yield client
 
 
 def test_index_response(client):
