@@ -5,157 +5,188 @@ from app.functions import replace_skills_with_json, replace_experience_with_json
 from app.models import User, SkillName
 
 
-@pytest.fixture  # TODO to wynieść do parametrize
-def skill_name_objects_list():
-    skill_name_objects_list = [SkillName(skill_name='skill1'),
-                               SkillName(skill_name='skill7'),
-                               SkillName(skill_name='skill3')]
-    return skill_name_objects_list
-
-
-@pytest.mark.parametrize('test_input', [{
-    "firstname": "First Test",
-    "lastname": "User",
-    "skills": [
+@pytest.mark.parametrize('test_input, skill_name_objects_list, expected', [
+(
+    {
+    'skills': []
+    },
+    [],
+    []
+),
+(
+    {
+    'firstname': 'Test 2',
+    'lastname': 'User',
+    'skills': [
         {
-            "skill_name": "skill1",
-            "skill_level": 1
-        },
-        {
-            "skill_name": "skill2",
-            "skill_level": 2
+        'skill_name': 'skill1',
+        'skill_level': 1
         }
     ],
-    "experience": [
+    'experience': [
         {
-            "company": "Firma",
-            "project": "Project",
-            "duration": 5
+        'company': 'Firma',
+        'project': 'Project',
+        'duration': 5
         }
     ]
-},
+    },
+    [SkillName(skill_name='skill1')],
+    [{'skill_name': 'skill1', 'skill_level': 1}]
+),
+(
     {
-        "firstname": "2nd Test",
-        "lastname": "User",
-        "dummy_key": "doesn't matter",
-        "skills": [
-            {
-                "skill_name": "skill1",
-                "skill_level": 1
-            },
-            {
-                "skill_name": "skill7",
-                "skill_level": 20
-            },
-            {
-                "skill_name": "skill16",
-                "skill_level": 30
-            }
-        ],
-        "experience": []
-    }
+    'firstname': 'Test 3',
+    'lastname': 'User',
+    'skills': [
+        {
+        'skill_name': 'skill1',
+        'skill_level': 1
+        },
+        {
+        'skill_name': 'skill2',
+        'skill_level': 2
+        }],
+    'experience': [
+        {
+        'company': 'Firma',
+        'project': 'Project',
+        'duration': 5
+        }]
+    },
+    [SkillName(skill_name='skill1'), SkillName(skill_name='skill7'), SkillName(skill_name='skill3')],
+    [{'skill_name': 'skill1', 'skill_level': 1}, {'skill_name': 'skill2', 'skill_level': 2}]
+),
+(
+    {
+    'firstname': '4th Test',
+    'lastname': 'User',
+    'dummy_key': 'doesnt matter',
+    'skills': [
+        {
+        'skill_name': 'skill1',
+        'skill_level': 1
+        },
+        {
+        'skill_name': 'skill7',
+        'skill_level': 20
+        },
+        {
+        'skill_name': 'skill16',
+        'skill_level': 30
+        }
+    ],
+    'experience': []
+    },
+    [SkillName(skill_name='skill1'),
+     SkillName(skill_name='skill7'),
+     SkillName(skill_name='skill16')],
+    [{'skill_name': 'skill1', 'skill_level': 1},
+     {'skill_name': 'skill7', 'skill_level': 20},
+     {'skill_name': 'skill16', 'skill_level': 30}]
+)
 ])
 @patch('app.main.get_session')
-def test_replace_skills_with_json_success(get_session_mock, db_credentials, skill_name_objects_list, test_input):
+def test_replace_skills_with_json_success(get_session_mock, db_credentials, skill_name_objects_list, expected,
+                                          test_input):
     new_cv = User()
     session = get_session_mock()
-    expected_query_result = skill_name_objects_list
-    session.query.return_value.filter.return_value.all.return_value = expected_query_result
+    session.query.return_value.filter.return_value.all.return_value = skill_name_objects_list
     replace_skills_with_json(session, new_cv, test_input)
-    assert new_cv.skills[0].object_as_dict() == test_input['skills'][0]  # TODO to ma być podane jako parametr
-    assert new_cv.skills[-1].object_as_dict() == test_input['skills'][-1]
-    assert len(new_cv.skills) == len(test_input['skills'])
+    assert str(new_cv.skills) == str(expected)
 
 
-@patch('app.session.get_session')
-def test_replace_skills_with_json_empty(get_session_mock, db_credentials, test_input={
-    "skills": []
-}):
-    cv = User()
-    session = get_session_mock()
-    expected_query_result = []
-    session.query.return_value.filter.return_value.all.return_value = expected_query_result
-    replace_skills_with_json(session, cv, test_input)
-    assert cv.skills == []
-
-
-@pytest.mark.parametrize('test_input', [{
-    "firstname": "Second Test",
-    "lastname": "User",
-    "skills": [
+@pytest.mark.parametrize('test_input, expected', [
+(
+    {
+    'abc': 'def'
+    },
+    []
+),
+(
+    {
+    'experience': []
+    },
+    []
+),
+(
+    {
+    'firstname': 'Test 2',
+    'lastname': 'User',
+    'skills': [
         {
-            "skill_name": "skill1",
-            "skill_level": 1
+        'skill_name': 'skill1',
+        'skill_level': 1
+        }],
+    'experience': [
+        {
+        'company': 'Firma',
+        'project': 'Project',
+        'duration': 5
+        }]
+    },
+    [{'company': 'Firma', 'project': 'Project', 'duration': 5}]
+),
+(
+    {
+    'firstname': 'Third Test',
+    'lastname': 'User',
+    'skills': [
+        {
+        'skill_name': 'skill1',
+        'skill_level': 1
         },
         {
-            "skill_name": "skill2",
-            "skill_level": 2
-        }
-    ],
-    "experience": [
+        'skill_name': 'skill2',
+        'skill_level': 2
+        }],
+    'experience': [
         {
-            "company": "Firma",
-            "project": "Project",
-            "duration": 5
-        }
-    ]
-},
+        'company': 'Firma',
+        'project': 'Project',
+        'duration': 5
+        },
+        {
+        'company': 'Firma2',
+        'project': 'Project2',
+        'duration': 50
+        }]
+    },
+    [{'company': 'Firma', 'project': 'Project', 'duration': 5},
+     {'company':'Firma2', 'project': 'Project2', 'duration': 50}]
+),
+(
     {
-        "firstname": "3rd Test",
-        "lastname": "User",
-        "dummy_key": "doesn't matter",
-        "skills": [],
-        "experience": [
-            {
-                "company": "Firma",
-                "project": "Project",
-                "duration": 5
-            },
-            {
-                "company": "Firma",
-                "project": "Project2",
-                "duration": 6
-            },
-            {
-                "company": "Firma3",
-                "project": "Project4",
-                "duration": 7
-            }
-        ]
-    }
+    'firstname': '3rd Test',
+    'lastname': 'User',
+    'dummy_key': 'doesnt matter',
+    'skills': [],
+    'experience': [
+        {
+        'company': 'Firma',
+        'project': 'Project',
+        'duration': 5
+        },
+        {
+        'company': 'Firma',
+        'project': 'Project2',
+        'duration': 6
+        },
+        {
+        'company': 'Firma3',
+        'project': 'Project4',
+        'duration': 7
+        }]
+    },
+    [{'company': 'Firma', 'project': 'Project', 'duration': 5},
+     {'company': 'Firma', 'project': 'Project2', 'duration': 6},
+     {'company': 'Firma3', 'project': 'Project4', 'duration': 7}]
+)
 ])
-def test_replace_experience_with_json_success(test_input):
+def test_replace_experience_with_json_success(test_input, expected):
     new_cv = User()
     replace_experience_with_json(new_cv, test_input)
-    assert new_cv.experience[0].object_as_dict() == test_input['experience'][0]
-    assert new_cv.experience[-1].object_as_dict() == test_input['experience'][-1]
-    assert len(new_cv.experience) == len(test_input['experience'])
-
-
-# TODO to miałem wyrzucic do tej powyzej, ale tu jest inny assert
-@pytest.mark.parametrize('test_input', [
-    {
-        "firstname": "Test",
-        "lastname": "1",
-        "skills": [],
-        "experience": []
-    },
-    {
-        "firstname": "Test",
-        "lastname": "1",
-        "skills": [],
-    },
-
-    {
-        "abc": "def"
-    },
-    {
-    }
-])
-def test_replace_experience_with_json_empty(test_input):
-    new_cv = User()
-    replace_experience_with_json(new_cv, test_input)
-    assert new_cv.experience == []
+    assert str(new_cv.experience) == str(expected)
 
 
 @pytest.mark.parametrize('test_input, expected', [
