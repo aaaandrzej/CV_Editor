@@ -55,14 +55,14 @@ def api_cv_post() -> Tuple[dict, int]:
         replace_experience_with_json(new_cv, json_data)
     except (KeyError, TypeError, AttributeError) as ex:
         return error_response('bad input data', 400, ex)
-    except OperationalError as ex:  # TODO wiem, ze tak nie mialem robic, ale musze tu jakos obsluzyc brak bazy danych
-        return error_response('db error', 400, ex)
+    except OperationalError as ex:
+        return error_response('db error', 500, ex)
 
     session.add(new_cv)
 
     try:
         session.commit()
-    except DataError as ex:
+    except DataError as ex:  # TODO jeszcze to przetestowac z session.commit.side_effect
         return error_response('bad input data', 400, ex)
 
     return {'success': 'item added'}, 201
@@ -167,4 +167,4 @@ def api_cv_stats_count() -> Response:
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)

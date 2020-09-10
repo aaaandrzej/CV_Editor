@@ -5,7 +5,7 @@ from app.functions import replace_skills_with_json, replace_experience_with_json
 from app.models import User, SkillName
 
 
-@pytest.fixture
+@pytest.fixture  # TODO to wynieść do parametrize
 def skill_name_objects_list():
     skill_name_objects_list = [SkillName(skill_name='skill1'),
                                SkillName(skill_name='skill7'),
@@ -59,10 +59,10 @@ def skill_name_objects_list():
 def test_replace_skills_with_json_success(get_session_mock, db_credentials, skill_name_objects_list, test_input):
     new_cv = User()
     session = get_session_mock()
-    expected_query_result = [obj for obj in skill_name_objects_list]
+    expected_query_result = skill_name_objects_list
     session.query.return_value.filter.return_value.all.return_value = expected_query_result
     replace_skills_with_json(session, new_cv, test_input)
-    assert new_cv.skills[0].object_as_dict() == test_input['skills'][0]
+    assert new_cv.skills[0].object_as_dict() == test_input['skills'][0]  # TODO to ma być podane jako parametr
     assert new_cv.skills[-1].object_as_dict() == test_input['skills'][-1]
     assert len(new_cv.skills) == len(test_input['skills'])
 
@@ -77,16 +77,6 @@ def test_replace_skills_with_json_empty(get_session_mock, db_credentials, test_i
     session.query.return_value.filter.return_value.all.return_value = expected_query_result
     replace_skills_with_json(session, cv, test_input)
     assert cv.skills == []
-
-
-@patch('app.session.get_session')
-def test_replace_skills_with_json_wrong_key(get_session_mock, db_credentials, test_input={
-    "skilsls": []
-}):
-    cv = User()
-    session = get_session_mock()
-    with pytest.raises(KeyError):
-        replace_skills_with_json(session, cv, test_input)
 
 
 @pytest.mark.parametrize('test_input', [{
@@ -166,19 +156,6 @@ def test_replace_experience_with_json_empty(test_input):
     new_cv = User()
     replace_experience_with_json(new_cv, test_input)
     assert new_cv.experience == []
-
-
-# TODO to miałem usunąć bo nie ma sensu, ale czy aby na pewno?
-def test_replace_experience_with_json_wrong_key(test_input={
-    "experience": [
-        {
-            "wrong_key": "hmm"
-        }
-    ]
-}):
-    new_cv = User()
-    with pytest.raises(KeyError):
-        replace_experience_with_json(new_cv, test_input)
 
 
 @pytest.mark.parametrize('test_input, expected', [

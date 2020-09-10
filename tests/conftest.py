@@ -9,6 +9,6 @@ def db_credentials(monkeypatch):
     monkeypatch.setenv('DB_PORT', '3306')
     monkeypatch.setenv('DB_ROOT_PASSWORD', 'testing')
     monkeypatch.setenv('DB_ROOT_USER', 'testing')
-    monkeypatch.setenv('DB_USER', 'testing')
-    monkeypatch.setenv('DB_PASSWORD', 'testing')
+    # monkeypatch.setenv('DB_USER', 'testing')
+    # monkeypatch.setenv('DB_PASSWORD', 'testing')
     monkeypatch.setenv('DB_NAME', 'testing')
