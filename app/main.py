@@ -62,7 +62,7 @@ def api_cv_post() -> Tuple[dict, int]:
 
     try:
         session.commit()
-    except DataError as ex:  # TODO jeszcze to przetestowac z session.commit.side_effect
+    except DataError as ex:
         return error_response('bad input data', 400, ex)
 
     return {'success': 'item added'}, 201
