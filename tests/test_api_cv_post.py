@@ -1,6 +1,6 @@
-from unittest.mock import patch, Mock
+from unittest.mock import patch
 import pytest
-from sqlalchemy.exc import OperationalError
+from sqlalchemy.exc import OperationalError, DataError
 
 
 @pytest.fixture
@@ -129,7 +129,7 @@ def client(app):
     'skills': [],
     'experience': []
     },
-    KeyError,
+    TypeError,
     None,
     ({'error': 'bad input data'}, 400)
 ),
@@ -145,21 +145,20 @@ def client(app):
         }]
     },
     None,
-    KeyError,
+    AttributeError,
     ({'error': 'bad input data'}, 400)
 ),
-# TODO to ponizej nie zadziala:
-# (
-#     {
-#     'firstname': 'no skills',
-#     'lastname': 'User',
-#     'skills': [],
-#     'experience': []
-#     },
-#     None,
-#     OperationalError,
-#     ({'error': 'db error'}, 500)
-# ),
+(
+    {
+    'firstname': 'no skills',
+    'lastname': 'User',
+    'skills': [],
+    'experience': []
+    },
+    OperationalError(OperationalError, OperationalError, OperationalError),
+    None,
+    ({'error': 'db error'}, 500)
+),
 (
     {},
     None,
@@ -174,27 +173,27 @@ def test_api_post_cv(replace_skills_with_json_mock, replace_experience_with_json
                                 test_input, replace_skills_with_json_error, replace_experience_with_json_error,
                                 expected,
                                 api_cv_post, client):
-    client.post('/api/cv', json=test_input)  # TODO docelowo mozna zamienic na json=Mock()
+
     if replace_skills_with_json_error is not None:
         replace_skills_with_json_mock.side_effect = replace_skills_with_json_error
     if replace_experience_with_json_error is not None:
         replace_experience_with_json_mock.side_effect = replace_experience_with_json_error
 
-    actual = api_cv_post()
+    response = client.post('/api/cv', json=test_input, follow_redirects=True)
+    actual = response.get_json(), response.status_code
 
     assert actual == expected
 
 
-# TODO IN PROGRESS
-# @patch('app.session.session')
-# def test_api_cv_post_no_db_error(session_mock, client, api_cv_post, test_input={
-#     'firstname': 'Test',
-#     'lastname': 'User',
-#     'skills': [],
-#     'experience': []
-# }):
-#     actual = client.post('/api/cv', json=test_input)
-#     session_mock.side_effect = OperationalError
-#     # actual = api_cv_post()
-#     expected = ({'error': 'db error'}, 500)
-#     assert actual == expected
+@patch('app.main.get_session')
+@patch('app.main.replace_skills_with_json')
+@patch('app.main.replace_experience_with_json')
+def test_api_post_cv_data_error(replace_skills_with_json_mock, replace_experience_with_json_mock, get_session_mock,
+                                                                api_cv_post, client):
+
+    session = get_session_mock()
+    session.commit.side_effect = DataError
+
+    response = client.post('/api/cv', json={}, follow_redirects=True)
+    actual = response.get_json(), response.status_code
+    assert actual == ({'error': 'bad input data'}, 400)

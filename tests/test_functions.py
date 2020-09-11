@@ -87,13 +87,13 @@ from app.models import User, SkillName
 )
 ])
 @patch('app.main.get_session')
-def test_replace_skills_with_json_success(get_session_mock, db_credentials, skill_name_objects_list, expected,
+def test_replace_skills_with_json(get_session_mock, db_credentials, skill_name_objects_list, expected,
                                           test_input):
     new_cv = User()
     session = get_session_mock()
     session.query.return_value.filter.return_value.all.return_value = skill_name_objects_list
     replace_skills_with_json(session, new_cv, test_input)
-    assert str(new_cv.skills) == str(expected)
+    assert [skill.object_as_dict() for skill in new_cv.skills] == expected
 
 
 @pytest.mark.parametrize('test_input, expected', [
@@ -183,10 +183,10 @@ def test_replace_skills_with_json_success(get_session_mock, db_credentials, skil
      {'company': 'Firma3', 'project': 'Project4', 'duration': 7}]
 )
 ])
-def test_replace_experience_with_json_success(test_input, expected):
+def test_replace_experience_with_json(test_input, expected):
     new_cv = User()
     replace_experience_with_json(new_cv, test_input)
-    assert str(new_cv.experience) == str(expected)
+    assert [exp.object_as_dict() for exp in new_cv.experience] == expected
 
 
 @pytest.mark.parametrize('test_input, expected', [
@@ -206,7 +206,7 @@ def test_parse_params(test_input, expected):
     ([{'skill_name': 'skill1', 'skill_level': 1}], ':param0'),
     ([], '')
 ])
-def test_create_params_success(test_input, expected):
+def test_create_params(test_input, expected):
     assert create_param_subs(test_input) == expected
 
 
