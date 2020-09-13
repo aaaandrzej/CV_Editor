@@ -10,12 +10,11 @@ def step_impl(context):
         f'actual: {health_check.status_code}, expected: 200'
 
 
-@step('user sends "{json_input}" query')
-def step_impl(context, json_input):
-    payload = {"firstname": "",
-               "lastname": "",
-               "skills": [],
-               "experience": []}
+@step('user sends "{json_file}" query')
+def step_impl(context, json_file):
+    with open('features/steps/'+json_file) as file:
+        payload = json.load(file)
+
     url = APP_URL + 'api/cv'
     response = requests.post(url, json=payload)
     context.response = response.json()
@@ -32,3 +31,26 @@ def step_impl(context, status_code):
 def step_impl(context, response):
     assert context.response == json.loads(response), \
         f'actual: {context.response}, expected: {json.loads(response)}'
+
+
+@step('"{json_file}" content should be present in database')
+def step_impl(context, json_file):
+
+    if json_file[0] == '2':
+
+        with open('features/steps/' + json_file) as file:
+            payload = json.load(file)
+
+        validated_user = {
+            'firstname': payload['firstname'],
+            'lastname': payload['lastname'],
+            'skills': payload.get('skills', ''),
+            'experience': payload.get('experience', [])
+        }
+
+        url = APP_URL + 'api/cv'
+        response = requests.get(url)
+        context.response = response.json()
+
+        assert validated_user in context.response, \
+            f'actual: {validated_user}, in expected: {context.response}'
