@@ -10,7 +10,7 @@ Behave (component tests)
 
 Using packet manager (poetry)
 
-Creating docker image of an application 
+Creating docker image of an application (multistage docker image)
 
 Application deployment in ECS using RDS 
 

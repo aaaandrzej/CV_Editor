@@ -1,0 +1,10 @@
+{
+"firstname": "no skills",
+"lastname": "User",
+"experience": [
+    {
+    "company": "Firma",
+    "project": "Project",
+    "duration": 5
+    }]
+}
