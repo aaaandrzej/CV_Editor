@@ -3,11 +3,6 @@ import requests
 from features.environment import APP_URL
 
 
-@given('an app is running')
-def step_impl(context):
-    pass
-
-
 @when('user uses get method on index endpoint')
 def step_impl(context):
     response = requests.get(APP_URL)

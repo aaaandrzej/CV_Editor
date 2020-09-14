@@ -1,21 +1,17 @@
-from behave import given, when, then, step
+from behave import step
 import requests, json
+from urllib.parse import urljoin
+from os.path import join
 from features.environment import APP_URL
-
-
-@step('an app is still running')
-def step_impl(context):
-    health_check = requests.get(APP_URL)
-    assert health_check.status_code == 200, \
-        f'actual: {health_check.status_code}, expected: 200'
 
 
 @step('user sends "{json_file}" query')
 def step_impl(context, json_file):
-    with open('features/steps/'+json_file) as file:
+    with open(join('features/fixtures/', json_file)) as file:
         payload = json.load(file)
 
-    url = APP_URL + 'api/cv'
+    url = urljoin(APP_URL, 'api/cv')
+
     response = requests.post(url, json=payload)
     context.response = response.json()
     context.status_code = response.status_code
@@ -33,24 +29,23 @@ def step_impl(context, response):
         f'actual: {context.response}, expected: {json.loads(response)}'
 
 
-@step('"{json_file}" content should be present in database')
+@step('"{json_file}" content is present in database')
 def step_impl(context, json_file):
 
-    if json_file[0] == '2':
+    with open(join('features/fixtures/', json_file)) as file:
+        payload = json.load(file)
 
-        with open('features/steps/' + json_file) as file:
-            payload = json.load(file)
+    validated_user = {
+        'firstname': payload['firstname'],
+        'lastname': payload['lastname'],
+        'skills': payload.get('skills', ''),
+        'experience': payload.get('experience', [])
+    }
 
-        validated_user = {
-            'firstname': payload['firstname'],
-            'lastname': payload['lastname'],
-            'skills': payload.get('skills', ''),
-            'experience': payload.get('experience', [])
-        }
+    url = urljoin(APP_URL, 'api/cv')
 
-        url = APP_URL + 'api/cv'
-        response = requests.get(url)
-        context.response = response.json()
+    response = requests.get(url)
+    context.response = response.json()
 
-        assert validated_user in context.response, \
-            f'actual: {validated_user}, in expected: {context.response}'
+    assert validated_user in context.response, \
+        f'actual: {validated_user}, in expected: {context.response}'
