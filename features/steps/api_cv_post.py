@@ -1,13 +1,15 @@
 from behave import step
 import requests, json
 from urllib.parse import urljoin
-from os.path import join
+from pathlib import Path
 from features.environment import APP_URL
+
+fixtures_dir = 'features/fixtures/'
 
 
 @step('user sends "{json_file}" query')
 def step_impl(context, json_file):
-    with open(join('features/fixtures/', json_file)) as file:
+    with open(Path(fixtures_dir) / json_file) as file:
         payload = json.load(file)
 
     url = urljoin(APP_URL, 'api/cv')
@@ -32,7 +34,7 @@ def step_impl(context, response):
 @step('"{json_file}" content is present in database')
 def step_impl(context, json_file):
 
-    with open(join('features/fixtures/', json_file)) as file:
+    with open(Path(fixtures_dir) / json_file) as file:
         payload = json.load(file)
 
     validated_user = {
