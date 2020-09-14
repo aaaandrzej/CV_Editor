@@ -155,7 +155,7 @@ def client(app):
     'skills': [],
     'experience': []
     },
-    OperationalError(OperationalError, OperationalError, OperationalError),
+    OperationalError('', '', ''),
     None,
     ({'error': 'db error'}, 500)
 ),
@@ -169,10 +169,10 @@ def client(app):
 @patch('app.main.get_session')
 @patch('app.main.replace_skills_with_json')
 @patch('app.main.replace_experience_with_json')
-def test_api_post_cv(replace_skills_with_json_mock, replace_experience_with_json_mock, get_session_mock,
-                                test_input, replace_skills_with_json_error, replace_experience_with_json_error,
-                                expected,
-                                api_cv_post, client):
+def test_api_post_cv(replace_experience_with_json_mock, replace_skills_with_json_mock, get_session_mock,
+                     api_cv_post, client,
+                     test_input, replace_skills_with_json_error, replace_experience_with_json_error,
+                     expected):
 
     if replace_skills_with_json_error is not None:
         replace_skills_with_json_mock.side_effect = replace_skills_with_json_error
@@ -180,6 +180,7 @@ def test_api_post_cv(replace_skills_with_json_mock, replace_experience_with_json
         replace_experience_with_json_mock.side_effect = replace_experience_with_json_error
 
     response = client.post('/api/cv', json=test_input, follow_redirects=True)
+
     actual = response.get_json(), response.status_code
 
     assert actual == expected
