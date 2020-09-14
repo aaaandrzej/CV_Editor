@@ -1,0 +1,11 @@
+{
+"firstname": "3rd Test",
+"lastname": "User",
+"dummy_key": "doesnt matter",
+"skills": [],
+"experience": [
+    {
+    "company": "Firma",
+    "project": "Project",
+    "duration": 5}]
+}

@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, Response, make_response
 from werkzeug.exceptions import BadRequest
+from sqlalchemy.exc import OperationalError
 from sqlalchemy.exc import DataError
 from typing import Tuple
 from app.models import User
@@ -54,6 +55,8 @@ def api_cv_post() -> Tuple[dict, int]:
         replace_experience_with_json(new_cv, json_data)
     except (KeyError, TypeError, AttributeError) as ex:
         return error_response('bad input data', 400, ex)
+    except OperationalError as ex:
+        return error_response('db error', 500, ex)
 
     session.add(new_cv)
 
@@ -164,4 +167,4 @@ def api_cv_stats_count() -> Response:
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)

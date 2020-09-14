@@ -1,0 +1,19 @@
+{
+"firstname": "Second Test",
+"lastname": "User",
+"skills": [
+    {
+    "skill_name": "skill1",
+    "skill_level": 1
+    },
+    {
+    "skill_name": "skill2",
+    "skill_level": 2
+    }],
+"experience": [
+    {
+    "company": "Firma",
+    "project": "Project",
+    "duration": 5
+    }]
+}
