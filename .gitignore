@@ -7,3 +7,4 @@ _temp*
 *.env
 .pytest_cache
 tests/.pytest_cache
+requirements.txt
