@@ -24,5 +24,16 @@ services:
       - MYSQL_PASSWORD=${DB_PASSWORD}
       - MYSQL_DATABASE=${DB_NAME}
     restart: always
+  app:
+    container_name: cv_editor_app
+    image: cv_editor_app:latest
+    ports:
+      - 5000:5000
+    environment:
+      - PYTHONPATH=.
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${DB_NAME}
 volumes:
   mysql_volume:
