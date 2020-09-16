@@ -1,6 +1,6 @@
 from behave import step
 import requests
-from features.environment import APP_URL
+from tests.component.environment import APP_URL
 
 
 @step('an app is running')
