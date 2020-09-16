@@ -1,29 +1,38 @@
-3/09/2020
+
+
+2020-09-18 
+
+Using packet manager (poetry) 
+
+Creating docker image of an application 
+
+Prepare AWS Lambda implementation and package preparation 
+
+Pack lambda 3rd party library dependencies into Lambda Layer 
 
 <br>
 
-Pytest (mock, patch, parametrize, fixture) 
-    
-Behave (component tests) 
+
+2020-09-25 
+
+Deploy Lambda with layer in AWS using AWS console
+ 
+Configure API Gateway to use the Lambda (AWS console) 
 
 <br>
 
-Using packet manager (poetry)
+2020-10-02 
 
-Creating docker image of an application (multistage docker image)
-
-Application deployment in ECS using RDS 
-
-Lambda preparing and deployment using API Gateway and RDS 
-
-<br>
-
-Using AWS services with boto3 (SSM, Secrets Manager) 
+Using AWS services with boto3 (Secrets Manager) for storing DB password 
 
 Mocking AWS services with moto and localstack 
 
-Terraform introduction - optional 
-
 <br>
+
+2020-10-09 
+
+Application deployment in ECS using RDS 
+
+Terraform introduction - optional 
 
 Authorization and authentication (API key, JWT) 
