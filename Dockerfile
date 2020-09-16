@@ -24,4 +24,4 @@ COPY app /src/app
 
 EXPOSE 5000
 
-CMD PYTHONPATH=. python app/main.py
+CMD PYTHONPATH=. gunicorn app.main:app --bind 0.0.0.0:5000

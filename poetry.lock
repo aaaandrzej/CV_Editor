@@ -13,7 +13,7 @@ python-dateutil = "*"
 python-editor = ">=0.3"
 
 [[package]]
-category = "main"
+category = "dev"
 description = "Atomic file writes."
 marker = "sys_platform == \"win32\""
 name = "atomicwrites"
@@ -22,7 +22,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 version = "1.4.0"
 
 [[package]]
-category = "main"
+category = "dev"
 description = "Classes Without Boilerplate"
 name = "attrs"
 optional = false
@@ -36,7 +36,7 @@ tests = ["coverage (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six
 tests_no_zope = ["coverage (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six"]
 
 [[package]]
-category = "main"
+category = "dev"
 description = "behave is behaviour-driven development, Python style"
 name = "behave"
 optional = false
@@ -53,7 +53,7 @@ develop = ["coverage", "pytest (>=3.0)", "pytest-cov", "tox", "invoke (>=0.21.0)
 docs = ["sphinx (>=1.6)", "sphinx-bootstrap-theme (>=0.6)"]
 
 [[package]]
-category = "main"
+category = "dev"
 description = "Python package for providing Mozilla's CA Bundle."
 name = "certifi"
 optional = false
@@ -72,7 +72,7 @@ version = "1.14.3"
 pycparser = "*"
 
 [[package]]
-category = "main"
+category = "dev"
 description = "Universal encoding detector for Python 2 and 3"
 name = "chardet"
 optional = false
@@ -88,7 +88,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 version = "7.1.2"
 
 [[package]]
-category = "main"
+category = "dev"
 description = "Cross-platform colored terminal text."
 marker = "sys_platform == \"win32\""
 name = "colorama"
@@ -136,32 +136,23 @@ dotenv = ["python-dotenv"]
 
 [[package]]
 category = "main"
-description = "Flask extension to integrate Alembic migrations"
-name = "flask-alembic"
+description = "WSGI HTTP Server for UNIX"
+name = "gunicorn"
 optional = false
-python-versions = "*"
-version = "2.0.1"
+python-versions = ">=3.4"
+version = "20.0.4"
 
 [package.dependencies]
-Flask = ">=0.10"
-Flask-SQLAlchemy = "*"
-SQLAlchemy = "*"
-alembic = ">=0.8"
+setuptools = ">=3.0"
+
+[package.extras]
+eventlet = ["eventlet (>=0.9.7)"]
+gevent = ["gevent (>=0.13)"]
+setproctitle = ["setproctitle"]
+tornado = ["tornado (>=0.2)"]
 
 [[package]]
-category = "main"
-description = "Adds SQLAlchemy support to your Flask application."
-name = "flask-sqlalchemy"
-optional = false
-python-versions = ">= 2.7, != 3.0.*, != 3.1.*, != 3.2.*, != 3.3.*"
-version = "2.4.4"
-
-[package.dependencies]
-Flask = ">=0.10"
-SQLAlchemy = ">=0.8.0"
-
-[[package]]
-category = "main"
+category = "dev"
 description = "Internationalized Domain Names in Applications (IDNA)"
 name = "idna"
 optional = false
@@ -169,7 +160,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 version = "2.10"
 
 [[package]]
-category = "main"
+category = "dev"
 description = "iniconfig: brain-dead simple config-ini parsing"
 name = "iniconfig"
 optional = false
@@ -222,7 +213,7 @@ python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*"
 version = "1.1.1"
 
 [[package]]
-category = "main"
+category = "dev"
 description = "More routines for operating on iterables, beyond itertools"
 name = "more-itertools"
 optional = false
@@ -230,7 +221,7 @@ python-versions = ">=3.5"
 version = "8.5.0"
 
 [[package]]
-category = "main"
+category = "dev"
 description = "Core utilities for Python packages"
 name = "packaging"
 optional = false
@@ -242,7 +233,7 @@ pyparsing = ">=2.0.2"
 six = "*"
 
 [[package]]
-category = "main"
+category = "dev"
 description = "parse() is the opposite of format()"
 name = "parse"
 optional = false
@@ -250,7 +241,7 @@ python-versions = "*"
 version = "1.18.0"
 
 [[package]]
-category = "main"
+category = "dev"
 description = "Simplifies to build parse types based on the parse module"
 name = "parse-type"
 optional = false
@@ -266,7 +257,7 @@ develop = ["coverage (>=4.4)", "pytest (>=3.2)", "pytest-cov", "tox (>=2.8)"]
 docs = ["sphinx (>=1.2)"]
 
 [[package]]
-category = "main"
+category = "dev"
 description = "plugin and hook calling mechanisms for python"
 name = "pluggy"
 optional = false
@@ -277,7 +268,7 @@ version = "0.13.1"
 dev = ["pre-commit", "tox"]
 
 [[package]]
-category = "main"
+category = "dev"
 description = "library with cross-python path, ini-parsing, io, code, log facilities"
 name = "py"
 optional = false
@@ -305,7 +296,7 @@ ed25519 = ["PyNaCl (>=1.4.0)"]
 rsa = ["cryptography"]
 
 [[package]]
-category = "main"
+category = "dev"
 description = "Python parsing module"
 name = "pyparsing"
 optional = false
@@ -313,7 +304,7 @@ python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 version = "2.4.7"
 
 [[package]]
-category = "main"
+category = "dev"
 description = "pytest: simple powerful testing with Python"
 name = "pytest"
 optional = false
@@ -355,7 +346,7 @@ python-versions = "*"
 version = "1.0.4"
 
 [[package]]
-category = "main"
+category = "dev"
 description = "Python HTTP for Humans."
 name = "requests"
 optional = false
@@ -401,7 +392,7 @@ postgresql_psycopg2cffi = ["psycopg2cffi"]
 pymysql = ["pymysql"]
 
 [[package]]
-category = "main"
+category = "dev"
 description = "Python Library for Tom's Obvious, Minimal Language"
 name = "toml"
 optional = false
@@ -409,7 +400,7 @@ python-versions = "*"
 version = "0.10.1"
 
 [[package]]
-category = "main"
+category = "dev"
 description = "HTTP library with thread-safe connection pooling, file post, and more."
 name = "urllib3"
 optional = false
@@ -434,7 +425,7 @@ dev = ["pytest", "pytest-timeout", "coverage", "tox", "sphinx", "pallets-sphinx-
 watchdog = ["watchdog"]
 
 [metadata]
-content-hash = "f685ed2ce3ff8c4554d0d1b81641230931b2eef72f9821e41ebfe291165272f9"
+content-hash = "033e41d9f12fc9434666bfb5a2eac81382e6452e60fc5083421da732ce810469"
 lock-version = "1.0"
 python-versions = "^3.8"
 
@@ -537,13 +528,9 @@ flask = [
     {file = "Flask-1.1.2-py2.py3-none-any.whl", hash = "sha256:8a4fdd8936eba2512e9c85df320a37e694c93945b33ef33c89946a340a238557"},
     {file = "Flask-1.1.2.tar.gz", hash = "sha256:4efa1ae2d7c9865af48986de8aeb8504bf32c7f3d6fdc9353d34b21f4b127060"},
 ]
-flask-alembic = [
-    {file = "Flask-Alembic-2.0.1.tar.gz", hash = "sha256:05a1e6f4148dbfcc9280a393373bfbd250af6f9f4f0ca9f744ef8f7376a3deec"},
-    {file = "Flask_Alembic-2.0.1-py2.py3-none-any.whl", hash = "sha256:7e67740b0b08d58dcae0c701d56b56e60f5fa4af907bb82b4cb0469229ba94ff"},
-]
-flask-sqlalchemy = [
-    {file = "Flask-SQLAlchemy-2.4.4.tar.gz", hash = "sha256:bfc7150eaf809b1c283879302f04c42791136060c6eeb12c0c6674fb1291fae5"},
-    {file = "Flask_SQLAlchemy-2.4.4-py2.py3-none-any.whl", hash = "sha256:05b31d2034dd3f2a685cbbae4cfc4ed906b2a733cff7964ada450fd5e462b84e"},
+gunicorn = [
+    {file = "gunicorn-20.0.4-py2.py3-none-any.whl", hash = "sha256:cd4a810dd51bf497552cf3f863b575dabd73d6ad6a91075b65936b151cbf4f9c"},
+    {file = "gunicorn-20.0.4.tar.gz", hash = "sha256:1904bb2b8a43658807108d59c3f3d56c2b6121a701161de0ddf9ad140073c626"},
 ]
 idna = [
     {file = "idna-2.10-py2.py3-none-any.whl", hash = "sha256:b97d804b1e9b523befed77c48dacec60e6dcb0b5391d57af6a65a312a90648c0"},
