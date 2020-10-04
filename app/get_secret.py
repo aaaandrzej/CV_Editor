@@ -1,6 +1,8 @@
 import boto3
+from functools import lru_cache
 
 
+@lru_cache(maxsize=None)
 def get_secret(region_name='us-east-2', secret_name='haslo', endpoint_url=None):
 
     # Create a Secrets Manager client
