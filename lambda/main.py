@@ -1,23 +1,26 @@
+import json
+import logging
+
+import boto3
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.exc import DataError
-import json
-from models import User
-from session import get_session
+
 from functions import replace_skills_with_json, replace_experience_with_json
 from get_secret import get_secret
-import boto3
+from models import User
+from session import get_session
 
 
 def response(status_code, body):
     return {
         'statusCode': status_code,
-        'body': body
+        'body': json.dumps(body)
     }
 
 
 def index_handler(event, context):
-    # return response(200, ('sm: ' + json.dumps(get_secret())))
-    return response(200, ('httpMethod: ' + json.dumps(event['httpMethod'])))
+    return response(200, {'password': get_secret()})
+    # return response(200, ('httpMethod: ' + event['httpMethod']))
 
 
 def db_check_handler(event, context):
@@ -25,18 +28,11 @@ def db_check_handler(event, context):
 
     query = session.query(User).all()
 
-    return response(200, (f'query: {query}'))
+    return response(200, f'{query}')
 
 
 def post_handler(event, context):
-    try:
-        json_data = json.loads(event['body'])
-
-    except TypeError:
-        json_data = event['body']
-
-    except KeyError:
-        return response(400, 'bad event body')
+    json_data = json.loads(event['body'])
 
     new_cv = User()
 
@@ -50,17 +46,17 @@ def post_handler(event, context):
     except (KeyError, TypeError, AttributeError) as ex:
         return response(400, f"can't process event body: {type(json_data)} {json_data}")
 
-    return response(200, f'item {new_cv.object_as_dict()} added')
+    return response(200, new_cv.object_as_dict())
 
 
 def ddb_handler(event, context):
     dynamo = boto3.client('dynamodb')
 
     # operations = {
-        # 'DELETE': lambda dynamo, x: dynamo.delete_item(**x),
-        # 'GET': lambda dynamo, x: dynamo.scan(**x),
-        # 'POST': lambda dynamo, x: dynamo.put_item(**x),
-        # 'PUT': lambda dynamo, x: dynamo.update_item(**x),
+    # 'DELETE': lambda dynamo, x: dynamo.delete_item(**x),
+    # 'GET': lambda dynamo, x: dynamo.scan(**x),
+    # 'POST': lambda dynamo, x: dynamo.put_item(**x),
+    # 'PUT': lambda dynamo, x: dynamo.update_item(**x),
     # }
 
     # operation = event['httpMethod']
@@ -68,23 +64,17 @@ def ddb_handler(event, context):
     # event['body']['TableName'] = 'aszulc_db_4lambda'  # NA CHWILE
 
     # if operation in operations:
-        # payload = event['body']
-        # return response(200, operations[operation](dynamo, payload))
+    # payload = event['body']
+    # return response(200, operations[operation](dynamo, payload))
     return response(200, dynamo.scan(TableName='aszulc_db_4lambda'))
 
 
-
 def handler(event, context):
+    # endpoint_url = os.environ.get('SECRETSMANAGER_ENDPOINT_URL')
+
     session = get_session()
 
-    try:
-        json_data = json.loads(event['body'])
-
-    except TypeError:
-        json_data = event['body']
-
-    except KeyError:
-        return response(400, 'bad event body')
+    json_data = json.loads(event['body'])
 
     new_cv = User()
 
@@ -98,6 +88,7 @@ def handler(event, context):
     except (KeyError, TypeError, AttributeError) as ex:
         return response(400, f"bad input in event body: {event['body']}")
     except OperationalError as ex:
+        logging.exception(ex)
         return response(500, f"db error")
 
     session.add(new_cv)
@@ -107,4 +98,4 @@ def handler(event, context):
     except DataError as ex:
         return response(400, f"bad input caused DataError")
 
-    return response(200, f'item {json.dumps(new_cv.object_as_dict())} added')
+    return response(200, new_cv.object_as_dict())
