@@ -19,11 +19,12 @@ def response(status_code, body):
 
 
 def index_handler(event, context):
-    return response(200, {'password': get_secret()})
-    # return response(200, ('httpMethod: ' + event['httpMethod']))
+    # return response(200, {'password': get_secret()})
+    return response(200, ('httpMethod: ' + event['httpMethod']))
 
 
 def db_check_handler(event, context):
+
     session = get_session()
 
     query = session.query(User).all()
