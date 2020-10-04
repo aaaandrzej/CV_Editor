@@ -2,9 +2,9 @@ from behave import step
 import requests, json
 from urllib.parse import urljoin
 from pathlib import Path
-from tests.component.environment import APP_URL
+from tests.app.component.environment import APP_URL
 
-fixtures_dir = 'tests/component/fixtures/'
+fixtures_dir = 'tests/app/component/fixtures/'
 
 
 @step('user sends "{json_file}" query')
