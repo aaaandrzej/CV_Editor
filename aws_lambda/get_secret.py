@@ -7,7 +7,8 @@ def get_secret(region_name='us-east-2', secret_name='haslo', endpoint_url=None):
     session = boto3.session.Session()
     client = session.client(
         service_name='secretsmanager',
-        region_name=region_name
+        region_name=region_name,
+        endpoint_url=endpoint_url
     )
 
     get_secret_value_response = client.get_secret_value(
