@@ -12,3 +12,4 @@ unittest:
 
 component:
 	behave tests/app/component/features/
+	behave tests/aws_lambda/component/features/
