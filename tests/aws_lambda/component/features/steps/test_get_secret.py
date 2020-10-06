@@ -1,5 +1,3 @@
-import logging
-
 from behave import when, then, step
 import boto3
 

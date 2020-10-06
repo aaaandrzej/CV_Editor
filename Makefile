@@ -10,6 +10,8 @@ build:
 unittest:
 	PYTHONPATH=.:aws_lambda pytest
 
-component:
+component-app:
 	behave tests/app/component/features/
-	behave tests/aws_lambda/component/features/
+
+component-lambda:
+	PYTHONPATH=.:aws_lambda behave tests/aws_lambda/component/features/
