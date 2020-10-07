@@ -14,4 +14,8 @@ component-app:
 	behave tests/app/component/features/
 
 component-lambda:
+	PYTHONPATH=. alembic downgrade base
+	PYTHONPATH=. alembic upgrade head
 	PYTHONPATH=.:aws_lambda behave tests/aws_lambda/component/features/
+	PYTHONPATH=. alembic downgrade base
+	PYTHONPATH=. alembic upgrade head
