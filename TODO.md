@@ -9,7 +9,6 @@ Creating docker image of an application
 Prepare AWS Lambda implementation and package preparation 
 
 Pack lambda 3rd party library dependencies into Lambda Layer 
-- pocwiczyc ze struktura folderow + 1 warstwa zamiast 2
 
 <br>
 
@@ -22,30 +21,26 @@ Configure API Gateway to use the Lambda (AWS console)
 
 <br>
 
+
 2020-10-02 
 
 Using AWS services with boto3 (Secrets Manager) for storing DB password 
-- dodac - @lru_cache(maxsize=None)
-- osobna funkcja wolajaca klienta - get_secrets_manager_client()
-
--dodac type annotations
 
 Mocking AWS services with moto (ut) and localstack (component tests) 
-- TODO
 
 Makefile scripts for building lambda packages & layers
-- TODO
+
 <br>
 
-2020-10-09 
+
+2020-10-21 
 
 Authorization and authentication (API key, JWT) 
+- pass hash + salt
+- api key - jwt - username in token
+- new user management endpoint (change password functionality)
+- individual endpoints should be secured and recognize who is logged in
 
-<br>
+Unit and component tests for auth
 
-one day..
-<br>
-Application deployment in ECS using RDS 
-
-Terraform introduction - optional 
-
+Fix old component tests - they should run on mysql in docker

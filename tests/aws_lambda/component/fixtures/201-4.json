@@ -1,22 +1,6 @@
 {
-"firstname": "Another test",
-"lastname": "User",
+"firstname": "no exp",
+"lastname": "user",
 "dummy_key": "doesnt matter",
-"skills": [],
-"experience": [
-    {
-    "company": "Firma",
-    "project": "Project",
-    "duration": 5
-    },
-    {
-    "company": "Firma2",
-    "project": "Project",
-    "duration": 5
-    },
-    {
-    "company": "Firma3",
-    "project": "Project",
-    "duration": 5
-    }]
+"skills": []
 }

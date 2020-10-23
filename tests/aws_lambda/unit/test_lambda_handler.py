@@ -1,11 +1,8 @@
 from unittest.mock import patch
 
-import boto3
 import json
 import pytest
-from moto import mock_secretsmanager
 from sqlalchemy.exc import OperationalError
-from sqlalchemy.exc import DataError
 
 
 @pytest.mark.parametrize('test_input, replace_skills_with_json_error, replace_experience_with_json_error, expected', [
@@ -177,7 +174,6 @@ from sqlalchemy.exc import DataError
 )
 ])
 @patch('aws_lambda.main.get_session')
-# @patch('aws_lambda.main.get_secret')
 @patch('aws_lambda.functions.replace_skills_with_json')
 @patch('aws_lambda.functions.replace_experience_with_json')
 def test_api_post_cv(replace_experience_with_json_mock, replace_skills_with_json_mock, get_session_mock,
