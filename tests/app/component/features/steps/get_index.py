@@ -1,6 +1,6 @@
 from behave import when, then, step
 import requests
-from tests.component.environment import APP_URL
+from tests.app.component.environment import APP_URL
 
 
 @when('user uses get method on index endpoint')

@@ -1,7 +1,9 @@
-from models import SkillUser, SkillName, Experience, User
-from sqlalchemy.orm import Session
-from typing import List, Tuple
 import logging
+from typing import List, Tuple
+
+from sqlalchemy.orm import Session
+
+from models import SkillUser, SkillName, Experience, User
 
 
 def replace_skills_with_json(session: Session, cv: User, json_data: dict) -> None:

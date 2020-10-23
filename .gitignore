@@ -8,3 +8,4 @@ _temp*
 .pytest_cache
 tests/.pytest_cache
 requirements.txt
+_build
