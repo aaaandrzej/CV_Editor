@@ -1,8 +1,14 @@
+import datetime
+import os
+from typing import Tuple
+
+import jwt
 from flask import Flask, request, jsonify, Response, make_response
-from werkzeug.exceptions import BadRequest
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.exc import DataError
-from typing import Tuple
+from werkzeug.exceptions import BadRequest
+
+from app.auth import token_required
 from app.models import User
 from app.session import get_session
 from app.functions import replace_skills_with_json, replace_experience_with_json, parse_params, create_param_subs, \
@@ -13,10 +19,40 @@ app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
 
 
+# app.config['SECRET_KEY'] = 'supersecretkey' # {os.environ['SECRET_KEY']}
+
+
 @app.route('/')
-def index() -> Response:
-    msg = 'For API please use /api/cv or /api/cv/<id>'
+@token_required
+def index(current_user) -> Response:
+    # msg = 'For API please use /api/cv or /api/cv/<id>'
+    msg = f'Hello {current_user}, this is protected'
     return Response(msg, mimetype='text/plain')
+
+
+@app.route('/login')
+def login() -> str:
+    auth = request.authorization
+
+    if not auth or not auth.username or not auth.password:
+        return make_response('Could not verify', 401, {'WWW-Authenticate': 'Basic realm="Login required!"'})
+
+    session = get_session()
+
+    user = session.query(User).filter_by(username=auth.username).first()
+
+    if not user:
+        return make_response('Could not verify', 401, {'WWW-Authenticate': 'Basic realm="Login required!"'})
+
+    # if check_password_hash(user.password, auth.password):
+    if user.password == auth.password:
+        token = jwt.encode(
+            {'username': user.username, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)},
+            f"{os.environ['SECRET_KEY']}")
+
+        return jsonify({'token': token.decode('UTF-8')})
+
+    return make_response('Could not verify', 401, {'WWW-Authenticate': 'Basic realm="Login required!"'})
 
 
 @app.route('/api/cv', methods=['GET'])
