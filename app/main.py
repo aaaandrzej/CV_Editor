@@ -4,29 +4,26 @@ from typing import Tuple
 
 import jwt
 from flask import Flask, request, jsonify, Response, make_response
-from sqlalchemy.exc import OperationalError
-from sqlalchemy.exc import DataError
+from sqlalchemy.exc import OperationalError, DataError
 from werkzeug.exceptions import BadRequest
+from werkzeug.security import check_password_hash, generate_password_hash
 
 from app.auth import token_required
-from app.models import User
-from app.session import get_session
 from app.functions import replace_skills_with_json, replace_experience_with_json, parse_params, create_param_subs, \
     error_response
+from app.models import User
+from app.session import get_session
 from app.sql_queries import SQL_COUNT, SQL_STATS
 
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
 
 
-# app.config['SECRET_KEY'] = 'supersecretkey' # {os.environ['SECRET_KEY']}
-
-
 @app.route('/')
 @token_required
 def index(current_user) -> Response:
     # msg = 'For API please use /api/cv or /api/cv/<id>'
-    msg = f'Hello {current_user}, this is protected'
+    msg = f'Hello {current_user.username} ({current_user.firstname} {current_user.lastname}), this is protected'
     return Response(msg, mimetype='text/plain')
 
 
@@ -35,7 +32,7 @@ def login() -> str:
     auth = request.authorization
 
     if not auth or not auth.username or not auth.password:
-        return make_response('Could not verify', 401, {'WWW-Authenticate': 'Basic realm="Login required!"'})
+        return make_response('Could not verify', 401, {'WWW-Authenticate': 'Basic realm="Login required!"'})  # TODO przerobić na jsonify, 401
 
     session = get_session()
 
@@ -44,11 +41,10 @@ def login() -> str:
     if not user:
         return make_response('Could not verify', 401, {'WWW-Authenticate': 'Basic realm="Login required!"'})
 
-    # if check_password_hash(user.password, auth.password):
-    if user.password == auth.password:
+    if check_password_hash(user.password, auth.password):
         token = jwt.encode(
             {'username': user.username, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)},
-            f"{os.environ['SECRET_KEY']}")
+            os.environ['SECRET_KEY'])
 
         return jsonify({'token': token.decode('UTF-8')})
 
@@ -83,8 +79,10 @@ def api_cv_post() -> Tuple[dict, int]:
     new_cv = User()
 
     try:
-        new_cv.username = json_data.get('username', '')
+        new_cv.username = json_data('username')
         new_cv.password = json_data.get('password', '')
+        if new_cv.password != '':
+            new_cv.password = generate_password_hash(new_cv.password, method='sha256', salt_length=8)
         new_cv.firstname = json_data['firstname']
         new_cv.lastname = json_data['lastname']
         replace_skills_with_json(session, new_cv, json_data)
@@ -101,7 +99,7 @@ def api_cv_post() -> Tuple[dict, int]:
     except DataError as ex:
         return error_response('bad input data', 400, ex)
 
-    return {'success': 'item added'}, 201
+    return {'success': 'item added'}, 201  # TODO zwracać tutaj payload
 
 
 @app.route('/api/cv/<id>', methods=['GET'])
@@ -203,4 +201,4 @@ def api_cv_stats_count() -> Response:
 
 
 if __name__ == '__main__':
-    app.run('0.0.0.0', debug=False)
+    app.run('0.0.0.0', debug=False)  # TODO response powinno być json a nie html

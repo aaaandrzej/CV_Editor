@@ -38,9 +38,10 @@ Makefile scripts for building lambda packages & layers
 Authorization and authentication (API key, JWT) 
 - pass hash + salt
 - api key - jwt - username in token
-- new user management endpoint (change password functionality)
+- new user management endpoint (change password functionality) - /api/cv/<id>/password (old pass, new pass)
 - individual endpoints should be secured and recognize who is logged in
+- admin role (post cv, put cv), non-admin role (put cv)
 
-Unit and component tests for auth
+Unit and component tests for new auth methods
 
 Fix old component tests - they should run on mysql in docker

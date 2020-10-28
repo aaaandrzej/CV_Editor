@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, Text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
@@ -29,8 +29,8 @@ class SkillUser(Base):
 class User(Base):
     __tablename__ = 'user'
     id = Column(Integer, primary_key=True)
-    username = Column(String(64))
-    password = Column(String(64))
+    username = Column(String(64), unique=True)
+    password = Column(String(255))
     firstname = Column(String(64))
     lastname = Column(String(64))
 
