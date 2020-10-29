@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Text
+from sqlalchemy import Column, Integer, String, ForeignKey, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
@@ -33,6 +33,7 @@ class User(Base):
     password = Column(String(255))
     firstname = Column(String(64))
     lastname = Column(String(64))
+    admin = Column(Boolean)
 
     skills = relationship('SkillUser', back_populates='user', cascade='all, delete-orphan', lazy='selectin')
     experience = relationship('Experience', back_populates='user', cascade='all, delete-orphan', lazy='joined')
@@ -42,6 +43,9 @@ class User(Base):
 
     def object_as_dict(self) -> dict:
         return {
+            'id': self.id,
+            'username': self.username,
+            'admin': self.admin,
             'firstname': self.firstname,
             'lastname': self.lastname,
             'skills': [skill.object_as_dict() for skill in self.skills],

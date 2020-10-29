@@ -79,10 +79,11 @@ def api_cv_post() -> Tuple[dict, int]:
     new_cv = User()
 
     try:
-        new_cv.username = json_data('username')
+        new_cv.username = json_data['username']
         new_cv.password = json_data.get('password', '')
         if new_cv.password != '':
             new_cv.password = generate_password_hash(new_cv.password, method='sha256', salt_length=8)
+        new_cv.admin = False
         new_cv.firstname = json_data['firstname']
         new_cv.lastname = json_data['lastname']
         replace_skills_with_json(session, new_cv, json_data)
@@ -162,6 +163,35 @@ def api_cv_id_delete(id: int) -> Tuple[str, int]:
 
     else:
         return '', 404
+
+
+@app.route('/api/cv/<id>/password', methods=['POST'])
+def api_cv_id_password(id: int) -> Tuple[dict, int]:
+    # CHANGE YOUR PASSWORD
+
+    json_data = request.get_json()
+
+    try:
+        old_password_from_json = json_data['old_password']
+        new_password_from_json = json_data['new_password']
+    except KeyError as ex:
+        return error_response('bad input data', 400, ex)
+
+    session = get_session()
+
+    cv_being_updated = session.query(User).get(id)
+
+    if cv_being_updated is None:
+        return error_response('bad input data', 404, None)
+
+    if check_password_hash(cv_being_updated.password, old_password_from_json):
+        cv_being_updated.password = generate_password_hash(new_password_from_json, method='sha256', salt_length=8)
+        session.commit()
+        print(cv_being_updated.password)
+
+        return jsonify(cv_being_updated.object_as_dict()), 200
+
+    return error_response('bad input data', 400, None)
 
 
 @app.route('/api/cv/stats', methods=['POST'])
