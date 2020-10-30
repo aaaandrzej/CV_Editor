@@ -48,6 +48,6 @@ def create_param_subs(json: List[dict]) -> str:
     return ', '.join(f':param{n}' for n in range(len(json)))
 
 
-def error_response(msg: str, status: int, ex: Exception) -> Tuple[dict, int]:
+def error_response(msg: str, status: int, ex: Exception = None) -> Tuple[dict, int]:
     logging.exception(ex)
     return {'error': msg}, status

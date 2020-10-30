@@ -2,10 +2,11 @@ import datetime
 import os
 from typing import Tuple
 
+import json
 import jwt
 from flask import Flask, request, jsonify, Response, make_response
 from sqlalchemy.exc import OperationalError, DataError
-from werkzeug.exceptions import BadRequest
+from werkzeug.exceptions import BadRequest, HTTPException
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from app.auth import token_required
@@ -19,27 +20,42 @@ app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
 
 
+@app.errorhandler(HTTPException)
+def handle_exception(e):
+    """Return JSON instead of HTML for HTTP errors."""
+    # start with the correct headers and status code from the error
+    response = e.get_response()
+    # replace the body with JSON
+    response.data = json.dumps({
+        "code": e.code,
+        "name": e.name,
+        "description": e.description,
+    })
+    response.content_type = "application/json"
+    return response
+
+
 @app.route('/')
 @token_required
-def index(current_user) -> Response:
+def index(current_user: User) -> Response:
     # msg = 'For API please use /api/cv or /api/cv/<id>'
     msg = f'Hello {current_user.username} ({current_user.firstname} {current_user.lastname}), this is protected'
     return Response(msg, mimetype='text/plain')
 
 
 @app.route('/login')
-def login() -> str:
+def login() -> Tuple[dict, int]:
     auth = request.authorization
 
     if not auth or not auth.username or not auth.password:
-        return make_response('Could not verify', 401, {'WWW-Authenticate': 'Basic realm="Login required!"'})  # TODO przerobić na jsonify, 401
+        return error_response('not authorized', 401, None)
 
     session = get_session()
 
     user = session.query(User).filter_by(username=auth.username).first()
 
     if not user:
-        return make_response('Could not verify', 401, {'WWW-Authenticate': 'Basic realm="Login required!"'})
+        return error_response('not authorized', 401, None)
 
     if check_password_hash(user.password, auth.password):
         token = jwt.encode(
@@ -48,7 +64,7 @@ def login() -> str:
 
         return jsonify({'token': token.decode('UTF-8')})
 
-    return make_response('Could not verify', 401, {'WWW-Authenticate': 'Basic realm="Login required!"'})
+    return error_response('not authorized', 401, None)
 
 
 @app.route('/api/cv', methods=['GET'])
@@ -65,8 +81,12 @@ def api_cv_get() -> Response:
 
 @app.route('/api/cv', methods=['POST'])
 @app.route('/api/cv/', methods=['POST'])
-def api_cv_post() -> Tuple[dict, int]:
+@token_required
+def api_cv_post(current_user: User) -> Tuple[dict, int]:
     # ADD NEW CV BASED ON JSON DATA
+
+    if not current_user.admin:
+        return error_response('not authorized', 401, None)
 
     session = get_session()
 
@@ -100,7 +120,7 @@ def api_cv_post() -> Tuple[dict, int]:
     except DataError as ex:
         return error_response('bad input data', 400, ex)
 
-    return {'success': 'item added'}, 201  # TODO zwracać tutaj payload
+    return jsonify(new_cv.object_as_dict()), 201
 
 
 @app.route('/api/cv/<id>', methods=['GET'])
@@ -119,21 +139,28 @@ def api_cv_id_get(id: int) -> Response:
         return make_response('', 404)
 
 
-@app.route('/api/cv/<id>', methods=['PUT'])
-def api_cv_id_put(id: int) -> Tuple[str, int]:
+@app.route('/api/cv/<user_id>', methods=['PUT'])
+@token_required
+def api_cv_id_put(current_user: User, user_id: int) -> Tuple[dict, int]:
     # UPDATE CV OF ID [id] WITH JSON DATA
+
+    if not current_user.admin:
+        if current_user.id != int(user_id):
+            return error_response('not authorized', 401, None)
 
     json_data = request.get_json()
 
     session = get_session()
 
-    cv_being_updated = session.query(User).get(id)
+    cv_being_updated = session.query(User).get(user_id)
 
     if cv_being_updated is None:
-        return '', 404
+        return error_response('bad input data', 400, None)
 
-    cv_being_updated.username = json_data.get('username', '')
+    cv_being_updated.username = json_data['username']
     cv_being_updated.password = json_data.get('password', '')
+    if cv_being_updated.password != '':
+        cv_being_updated.password = generate_password_hash(cv_being_updated.password, method='sha256', salt_length=8)
 
     cv_being_updated.firstname = json_data['firstname']
     cv_being_updated.lastname = json_data['lastname']
@@ -144,25 +171,29 @@ def api_cv_id_put(id: int) -> Tuple[str, int]:
 
     session.commit()
 
-    return '', 200
+    return jsonify(cv_being_updated.object_as_dict()), 200
 
 
-@app.route('/api/cv/<id>', methods=['DELETE'])
-def api_cv_id_delete(id: int) -> Tuple[str, int]:
+@app.route('/api/cv/<user_id>', methods=['DELETE'])
+@token_required
+def api_cv_id_delete(current_user: User, user_id: int) -> Tuple[dict, int]:
     # DELETE CV OF ID [id]
+
+    if not current_user.admin:
+        return error_response('not authorized', 401, None)
 
     session = get_session()
 
-    cv_to_be_deleted = session.query(User).get(id)
+    cv_to_be_deleted = session.query(User).get(user_id)
 
     if cv_to_be_deleted is not None:
         session.delete(cv_to_be_deleted)
         session.commit()
 
-        return '', 204
+        return jsonify({}), 204
 
     else:
-        return '', 404
+        return error_response('bad input data', 404, None)
 
 
 @app.route('/api/cv/<id>/password', methods=['POST'])
@@ -187,7 +218,6 @@ def api_cv_id_password(id: int) -> Tuple[dict, int]:
     if check_password_hash(cv_being_updated.password, old_password_from_json):
         cv_being_updated.password = generate_password_hash(new_password_from_json, method='sha256', salt_length=8)
         session.commit()
-        print(cv_being_updated.password)
 
         return jsonify(cv_being_updated.object_as_dict()), 200
 
@@ -195,7 +225,7 @@ def api_cv_id_password(id: int) -> Tuple[dict, int]:
 
 
 @app.route('/api/cv/stats', methods=['POST'])
-def api_cv_stats() -> Response:
+def api_cv_stats() -> dict:
     # GET CVs OF USERS WITH PROVIDED SKILL SET
 
     json_data = request.get_json()
@@ -214,7 +244,7 @@ def api_cv_stats() -> Response:
 
 
 @app.route('/api/cv/stats/count', methods=['POST'])
-def api_cv_stats_count() -> Response:
+def api_cv_stats_count() -> dict:
     # GET COUNT OF USERS WITH PROVIDED SKILL SET
 
     json_data = request.get_json()
@@ -227,8 +257,8 @@ def api_cv_stats_count() -> Response:
 
     result = session.execute(sql, params).scalar()
 
-    return make_response({'number_of_users_with_skill_set': result})
+    return jsonify({'number_of_users_with_skill_set': result})
 
 
 if __name__ == '__main__':
-    app.run('0.0.0.0', debug=False)  # TODO response powinno być json a nie html
+    app.run('0.0.0.0', debug=False)
