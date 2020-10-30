@@ -1,0 +1,412 @@
+{
+	"info": {
+		"_postman_id": "1271ce62-e584-4cb3-ab83-846c509d22d1",
+		"name": "cv_editor",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "127.0.0.1:5000/",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNjA0MDgwNTI3fQ.QajYvqgXSALiIKig57m0KiCY85PsjRZPgc8avV7bnyk",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNjAzODg2NTkzfQ.gi995UBuIGIryXbynqU42422ZeP9t1K1nSnUONSs1Vc",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"admin\",\n    \"firstname\": \"Admin\",\n    \"lastname\": \"***** ***\",\n    \"skills\": [],\n    \"experience\": []\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:5000",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000"
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "127.0.0.1:5000/login",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "dupa",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstname\": \"Placek\",\n    \"lastname\": \"\",\n    \"skills\": {},\n    \"experience\": []\n   \n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:5000/login",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "127.0.0.1:5000/api/cv/",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstname\": \"Placek\",\n    \"lastname\": \"\",\n    \"skills\": {},\n    \"experience\": []\n   \n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:5000/api/cv/",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"cv",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "127.0.0.1:5000/api/cv/",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNjA0MDgwNTI3fQ.QajYvqgXSALiIKig57m0KiCY85PsjRZPgc8avV7bnyk",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"new_password\": \"testowy\",\n    \"old_password\": \"testowy\"\n\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:5000/api/cv/2/password",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"cv",
+						"2",
+						"password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "127.0.0.1:5000/api/cv/",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNjA0MDgwNTI3fQ.QajYvqgXSALiIKig57m0KiCY85PsjRZPgc8avV7bnyk",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstname\": \"3\",\n    \"lastname\": \"User\",\n    \"skills\": [\n        {\n            \"skill_name\": \"sql\",\n            \"skill_level\": 20\n        },\n        {\n            \"skill_name\": \"python\",\n            \"skill_level\": 2\n        },\n        {\n            \"skill_name\": \"judo\",\n            \"skill_level\": 10\n        }\n    ],\n    \"experience\": [\n        {\n            \"company\": \"Projekt\",\n            \"project\": \"Projekt\",\n            \"duration\": 1\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:5000/api/cv/",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"cv",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "127.0.0.1:5000/api/cv/",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNjA0MDgwNTI3fQ.QajYvqgXSALiIKig57m0KiCY85PsjRZPgc8avV7bnyk",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:5000/api/cv/5",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"cv",
+						"5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "127.0.0.1:5000/api/cv/1",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstname\": \"Placek\",\n    \"lastname\": \"\",\n    \"skills\": {},\n    \"experience\": []\n   \n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:5000/api/cv/2",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"cv",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "127.0.0.1:5000/api/cv/2",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNjA0MDgwNTI3fQ.QajYvqgXSALiIKig57m0KiCY85PsjRZPgc8avV7bnyk",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"testowy\",\n    \"password\": \"testowy\",\n    \"firstname\": \"Testowyyyy\",\n    \"lastname\": \"Aijaijao\",\n    \"skills\": [\n        {\n            \"skill_name\": \"sql\",\n            \"skill_level\": 20\n        },\n        {\n            \"skill_name\": \"python\",\n            \"skill_level\": 2\n        },\n        {\n            \"skill_name\": \"judo\",\n            \"skill_level\": 10\n        }\n    ],\n    \"experience\": [\n        {\n            \"company\": \"Projekt\",\n            \"project\": \"Projekt\",\n            \"duration\": 1\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:5000/api/cv/2",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"cv",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "127.0.0.1:5000/api/cv/stats",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n    {\n    \"skill_name\": \"sql\",\n    \"skill_level\": 20\n    }\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:5000/api/cv/stats",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"cv",
+						"stats"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "127.0.0.1:5000/api/cv/stats/count",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n    {\n    \"skill_name\": \"sql\",\n    \"skill_level\": 20\n    }\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:5000/api/cv/stats/count",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"cv",
+						"stats",
+						"count"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
