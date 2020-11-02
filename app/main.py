@@ -36,10 +36,8 @@ def handle_exception(e):
 
 
 @app.route('/')
-@token_required
-def index(current_user: User) -> Response:
-    # msg = 'For API please use /api/cv or /api/cv/<id>'
-    msg = f'Hello {current_user.username} ({current_user.firstname} {current_user.lastname}), this is protected'
+def index() -> Response:
+    msg = 'For API please use /api/cv or /api/cv/<id>'
     return Response(msg, mimetype='text/plain')
 
 
@@ -67,16 +65,22 @@ def login() -> Tuple[dict, int]:
     return error_response('not authorized', 401, None)
 
 
+@app.route('/identify')
+@token_required
+def identify(current_user: User) -> Tuple[dict, int]:
+    return jsonify(current_user.object_as_dict()), 200
+
+
 @app.route('/api/cv', methods=['GET'])
 @app.route('/api/cv/', methods=['GET'])
-def api_cv_get() -> Response:
+def api_cv_get() -> Tuple[dict, int]:
     # GET ALL CVs
 
     session = get_session()
 
     all_db_records = [user.object_as_dict() for user in session.query(User)]
 
-    return jsonify(all_db_records)
+    return jsonify(all_db_records), 200
 
 
 @app.route('/api/cv', methods=['POST'])
@@ -124,7 +128,7 @@ def api_cv_post(current_user: User) -> Tuple[dict, int]:
 
 
 @app.route('/api/cv/<id>', methods=['GET'])
-def api_cv_id_get(id: int) -> Response:
+def api_cv_id_get(id: int) -> Tuple[dict, int]:
     # GET ONE CV OF ID [id]
 
     session = get_session()
@@ -132,7 +136,7 @@ def api_cv_id_get(id: int) -> Response:
     one_db_record = session.query(User).get(id)
 
     try:
-        response = jsonify(one_db_record.object_as_dict())
+        response = jsonify(one_db_record.object_as_dict()), 200
         return response
 
     except AttributeError:
@@ -225,7 +229,7 @@ def api_cv_id_password(id: int) -> Tuple[dict, int]:
 
 
 @app.route('/api/cv/stats', methods=['POST'])
-def api_cv_stats() -> dict:
+def api_cv_stats() -> Tuple[dict, int]:
     # GET CVs OF USERS WITH PROVIDED SKILL SET
 
     json_data = request.get_json()
@@ -240,11 +244,11 @@ def api_cv_stats() -> dict:
 
     users_with_skill_set = [{'firstname': user.firstname, 'lastname': user.lastname} for user in result]
 
-    return jsonify(users_with_skill_set)
+    return jsonify(users_with_skill_set), 200
 
 
 @app.route('/api/cv/stats/count', methods=['POST'])
-def api_cv_stats_count() -> dict:
+def api_cv_stats_count() -> Tuple[dict, int]:
     # GET COUNT OF USERS WITH PROVIDED SKILL SET
 
     json_data = request.get_json()
@@ -257,7 +261,7 @@ def api_cv_stats_count() -> dict:
 
     result = session.execute(sql, params).scalar()
 
-    return jsonify({'number_of_users_with_skill_set': result})
+    return jsonify({'number_of_users_with_skill_set': result}), 200
 
 
 if __name__ == '__main__':
