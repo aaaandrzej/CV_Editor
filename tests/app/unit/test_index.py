@@ -1,6 +1,5 @@
 import pytest
 from unittest.mock import patch
-import undecorated
 
 from app.models import User
 
@@ -17,10 +16,7 @@ def client(app):
         yield client
 
 
-@patch('app.auth.extract_user')
-def test_index_response(extract_user_mock, client):
-
-    extract_user_mock.return_value = User(username='test', password='test', firstname='te', lastname='st', admin=True)
+def test_index_response(client):
 
     rv = client.get('/')
-    assert rv.data == b'Hello test (te st), this is protected'
+    assert rv.data == b'For API please use /api/cv or /api/cv/<id>'
