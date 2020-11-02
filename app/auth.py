@@ -6,20 +6,9 @@ from jwt.exceptions import DecodeError, ExpiredSignatureError
 from flask import request, jsonify
 from sqlalchemy.orm.exc import NoResultFound
 
+from app.exceptions import ExpiredTokenError, InvalidTokenError, MissingTokenError
 from app.models import User
 from app.session import get_session
-
-
-class ExpiredTokenError(Exception):
-    pass
-
-
-class InvalidTokenError(Exception):
-    pass
-
-
-class MissingTokenError(Exception):
-    pass
 
 
 def extract_user():
