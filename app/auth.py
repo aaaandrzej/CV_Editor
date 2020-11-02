@@ -10,30 +10,55 @@ from app.models import User
 from app.session import get_session
 
 
+class ExpiredTokenError(Exception):
+    pass
+
+
+class InvalidTokenError(Exception):
+    pass
+
+
+class MissingTokenError(Exception):
+    pass
+
+
+def extract_user():
+    token = request.headers.get('Authorization')
+
+    if not token:
+        raise MissingTokenError
+
+    try:
+        token = token.split(' ')[1]
+        data = jwt.decode(token, os.environ['SECRET_KEY'])
+
+    except (DecodeError, KeyError):
+        raise InvalidTokenError
+    except ExpiredSignatureError:
+        raise ExpiredTokenError
+
+    session = get_session()
+
+    try:
+        current_user = session.query(User).filter_by(username=data['username']).one()
+    except NoResultFound:
+        raise InvalidTokenError
+
+    return current_user
+
+
 def token_required(func):
     @wraps(func)
-    def decorated(*args, **kwargs):
-        token = request.headers.get('Authorization')
-
-        if not token:
-            return jsonify({'message': 'Token is missing!'}), 401
-
+    def inner(*args, **kwargs):
         try:
-            token = token.split(' ')[1]
-            data = jwt.decode(token, os.environ['SECRET_KEY'])
+            current_user = extract_user()
 
-        except (DecodeError, KeyError):
-            return jsonify({'message': 'Token is invalid!'}), 401
-        except ExpiredSignatureError:
-            return jsonify({'message': 'Token has expired!'}), 401
-
-        session = get_session()
-
-        try:
-            current_user = session.query(User).filter_by(username=data['username']).one()
-        except NoResultFound:
-            return jsonify({'message': 'Token is invalid!'}), 401
+        except MissingTokenError:
+            return jsonify({'message': 'token is missing'}), 401
+        except InvalidTokenError:
+            return jsonify({'message': 'token is invalid'}), 401
+        except ExpiredTokenError:
+            return jsonify({'message': 'token has expired'}), 401
 
         return func(current_user, *args, **kwargs)
-
-    return decorated
+    return inner
