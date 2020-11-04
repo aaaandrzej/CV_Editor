@@ -1,3 +1,4 @@
+from json import JSONDecodeError
 from behave import step
 import requests, json
 from urllib.parse import urljoin
@@ -7,47 +8,42 @@ from tests.app.component.environment import APP_URL
 fixtures_dir = 'tests/app/component/fixtures/'
 
 
-@step('user sends "{json_file}" query')
+@step('admin user sends "{json_file}" query')
 def step_impl(context, json_file):
     with open(Path(fixtures_dir) / json_file) as file:
-        payload = json.load(file)
+        context.payload = json.load(file)
 
     url = urljoin(APP_URL, 'api/cv')
 
-    response = requests.post(url, json=payload)
-    context.response = response.json()
-    context.status_code = response.status_code
+    try:
+        context.token
+    except AttributeError:
+        context.token = ''
 
+    context.endpoint_response = requests.post(url, json=context.payload, headers={'Authorization': f'Bearer {context.token}'})
 
-@step('they should get a "{status_code}" status code')
-def step_impl(context, status_code):
-    assert context.status_code == int(status_code), \
-        f'actual: {context.status_code}, expected: {int(status_code)}'
-
-
-@step('a response message is "{response}"')
-def step_impl(context, response):
-    assert context.response == json.loads(response), \
-        f'actual: {context.response}, expected: {json.loads(response)}'
+    assert context.endpoint_response.status_code != 500, \
+        f'actual: {context.endpoint_response.status_code}, expected not 500'
 
 
 @step('"{json_file}" content is present in database')
 def step_impl(context, json_file):
 
-    with open(Path(fixtures_dir) / json_file) as file:
-        payload = json.load(file)
-
-    validated_user = {
-        'firstname': payload['firstname'],
-        'lastname': payload['lastname'],
-        'skills': payload.get('skills', ''),
-        'experience': payload.get('experience', [])
-    }
-
     url = urljoin(APP_URL, 'api/cv')
 
-    response = requests.get(url)
-    context.response = response.json()
+    verification_response = requests.get(url)
+    context.verification_response = verification_response.json()
 
-    assert validated_user in context.response, \
-        f'actual: {validated_user}, in expected: {context.response}'
+    assert context.payload['username'] in [user['username'] for user in context.verification_response], \
+        f"actual: {context.payload['username']}, in expected: {[user['username'] for user in context.verification_response]}"
+
+
+@step('a message response is "{response}"')
+def step_impl(context, response):
+
+    try:
+        context.response = json.dumps(context.endpoint_response.json())
+    except JSONDecodeError:
+        context.response = context.endpoint_response.text
+    assert context.response == response, \
+        f'actual: {context.response}, expected: {response}'
