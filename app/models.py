@@ -33,7 +33,7 @@ class User(Base):
     password = Column(String(255))
     firstname = Column(String(64))
     lastname = Column(String(64))
-    admin = Column(Boolean)
+    admin = Column(Boolean, nullable=False, default=False)
 
     skills = relationship('SkillUser', back_populates='user', cascade='all, delete-orphan', lazy='selectin')
     experience = relationship('Experience', back_populates='user', cascade='all, delete-orphan', lazy='joined')

@@ -1,6 +1,6 @@
 from app.models import SkillUser, SkillName, Experience, User
 from sqlalchemy.orm import Session
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 import logging
 
 
@@ -48,6 +48,6 @@ def create_param_subs(json: List[dict]) -> str:
     return ', '.join(f':param{n}' for n in range(len(json)))
 
 
-def error_response(msg: str, status: int, ex: Exception = None) -> Tuple[dict, int]:
+def error_response(msg: str, status: int, ex: Optional[Exception] = None) -> Tuple[dict, int]:
     logging.exception(ex)
     return {'error': msg}, status

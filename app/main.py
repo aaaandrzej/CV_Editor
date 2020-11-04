@@ -103,7 +103,7 @@ def api_cv_post(current_user: User) -> Tuple[dict, int]:
     new_cv = User()
 
     try:
-        new_cv.username = json_data['username']
+        new_cv.username = json_data['username']  # TODO obsluzyc przypadek gdzie username juz istnieje
         new_cv.password = json_data.get('password', '')
         if new_cv.password != '':
             new_cv.password = generate_password_hash(new_cv.password, method='sha256', salt_length=8)
@@ -161,10 +161,7 @@ def api_cv_id_put(current_user: User, user_id: int) -> Tuple[dict, int]:
     if cv_being_updated is None:
         return error_response('bad input data', 400, None)
 
-    cv_being_updated.username = json_data['username']
-    cv_being_updated.password = json_data.get('password', '')
-    if cv_being_updated.password != '':
-        cv_being_updated.password = generate_password_hash(cv_being_updated.password, method='sha256', salt_length=8)
+    cv_being_updated.username = json_data['username']  # TODO obsluzyc istniejacy juz username?
 
     cv_being_updated.firstname = json_data['firstname']
     cv_being_updated.lastname = json_data['lastname']
@@ -200,9 +197,14 @@ def api_cv_id_delete(current_user: User, user_id: int) -> Tuple[dict, int]:
         return error_response('bad input data', 404, None)
 
 
-@app.route('/api/cv/<id>/password', methods=['POST'])
-def api_cv_id_password(id: int) -> Tuple[dict, int]:
+@app.route('/api/cv/<user_id>/password', methods=['POST'])
+@token_required
+def api_cv_id_password(current_user: User, user_id: int) -> Tuple[dict, int]:  # TODO zabezpieczyc endpoint!!
     # CHANGE YOUR PASSWORD
+
+    if not current_user.admin:
+        if current_user.id != int(user_id):
+            return error_response('not authorized', 401, None)
 
     json_data = request.get_json()
 
@@ -214,7 +216,7 @@ def api_cv_id_password(id: int) -> Tuple[dict, int]:
 
     session = get_session()
 
-    cv_being_updated = session.query(User).get(id)
+    cv_being_updated = session.query(User).get(user_id)
 
     if cv_being_updated is None:
         return error_response('bad input data', 404, None)
