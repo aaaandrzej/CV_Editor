@@ -1,17 +1,17 @@
 import datetime
+import json
 import os
 from typing import Tuple
 
-import json
-import jwt
 from flask import Flask, request, jsonify, Response, make_response
-from sqlalchemy.exc import OperationalError, DataError
+import jwt
+from sqlalchemy.exc import OperationalError, DataError, IntegrityError
 from werkzeug.exceptions import BadRequest, HTTPException
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from app.auth import token_required
 from app.functions import replace_skills_with_json, replace_experience_with_json, parse_params, create_param_subs, \
-    error_response
+    error_response, check_if_username_unique
 from app.models import User
 from app.session import get_session
 from app.sql_queries import SQL_COUNT, SQL_STATS
@@ -20,7 +20,7 @@ app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
 
 
-@app.errorhandler(HTTPException)
+@app.errorhandler(HTTPException)  # from Flask documentation
 def handle_exception(e):
     """Return JSON instead of HTML for HTTP errors."""
     # start with the correct headers and status code from the error
@@ -103,7 +103,7 @@ def api_cv_post(current_user: User) -> Tuple[dict, int]:
     new_cv = User()
 
     try:
-        new_cv.username = json_data['username']  # TODO obsluzyc przypadek gdzie username juz istnieje
+        new_cv.username = json_data['username']
         new_cv.password = json_data.get('password', '')
         if new_cv.password != '':
             new_cv.password = generate_password_hash(new_cv.password, method='sha256', salt_length=8)
@@ -121,19 +121,19 @@ def api_cv_post(current_user: User) -> Tuple[dict, int]:
 
     try:
         session.commit()
-    except DataError as ex:
+    except (DataError, IntegrityError) as ex:
         return error_response('bad input data', 400, ex)
 
     return jsonify(new_cv.object_as_dict()), 201
 
 
-@app.route('/api/cv/<id>', methods=['GET'])
-def api_cv_id_get(id: int) -> Tuple[dict, int]:
+@app.route('/api/cv/<user_id>', methods=['GET'])
+def api_cv_id_get(user_id: int) -> Tuple[dict, int]:
     # GET ONE CV OF ID [id]
 
     session = get_session()
 
-    one_db_record = session.query(User).get(id)
+    one_db_record = session.query(User).get(user_id)
 
     try:
         response = jsonify(one_db_record.object_as_dict()), 200
@@ -161,7 +161,11 @@ def api_cv_id_put(current_user: User, user_id: int) -> Tuple[dict, int]:
     if cv_being_updated is None:
         return error_response('bad input data', 400, None)
 
-    cv_being_updated.username = json_data['username']  # TODO obsluzyc istniejacy juz username?
+    if cv_being_updated.username != json_data['username']:
+        if not check_if_username_unique(session, json_data['username']):
+            return error_response('bad input data', 400, None)
+
+    cv_being_updated.username = json_data['username']
 
     cv_being_updated.firstname = json_data['firstname']
     cv_being_updated.lastname = json_data['lastname']
