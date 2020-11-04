@@ -199,7 +199,7 @@ def api_cv_id_delete(current_user: User, user_id: int) -> Tuple[dict, int]:
 
 @app.route('/api/cv/<user_id>/password', methods=['POST'])
 @token_required
-def api_cv_id_password(current_user: User, user_id: int) -> Tuple[dict, int]:  # TODO zabezpieczyc endpoint!!
+def api_cv_id_password(current_user: User, user_id: int) -> Tuple[dict, int]:
     # CHANGE YOUR PASSWORD
 
     if not current_user.admin:
