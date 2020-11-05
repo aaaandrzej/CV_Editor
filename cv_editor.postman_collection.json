@@ -12,27 +12,20 @@
 			},
 			"request": {
 				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNjA0MDgwNTI3fQ.QajYvqgXSALiIKig57m0KiCY85PsjRZPgc8avV7bnyk",
-							"type": "string"
-						}
-					]
+					"type": "noauth"
 				},
 				"method": "GET",
 				"header": [
 					{
-						"key": "Authorization",
-						"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNjAzODg2NTkzfQ.gi995UBuIGIryXbynqU42422ZeP9t1K1nSnUONSs1Vc",
+						"key": "",
+						"value": "",
 						"type": "text",
 						"disabled": true
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"username\": \"admin\",\n    \"firstname\": \"Admin\",\n    \"lastname\": \"***** ***\",\n    \"skills\": [],\n    \"experience\": []\n}",
+					"raw": "",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -62,13 +55,13 @@
 					"type": "basic",
 					"basic": [
 						{
-							"key": "username",
-							"value": "admin",
+							"key": "password",
+							"value": "dupa",
 							"type": "string"
 						},
 						{
-							"key": "password",
-							"value": "dupa",
+							"key": "username",
+							"value": "admin",
 							"type": "string"
 						}
 					]
@@ -77,7 +70,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"firstname\": \"Placek\",\n    \"lastname\": \"\",\n    \"skills\": {},\n    \"experience\": []\n   \n}",
+					"raw": "",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -101,16 +94,69 @@
 			"response": []
 		},
 		{
+			"name": "127.0.0.1:5000/identify",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNjA0NTc5ODcyfQ.Ch8l2Xzn0WRYLvzjlYpL8kpYRaD5-sLSRtJgIMEE6Qo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:5000/identify",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"identify"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "127.0.0.1:5000/api/cv/",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
 			},
 			"request": {
+				"auth": {
+					"type": "noauth"
+				},
 				"method": "GET",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"firstname\": \"Placek\",\n    \"lastname\": \"\",\n    \"skills\": {},\n    \"experience\": []\n   \n}",
+					"raw": "",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -143,7 +189,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNjA0MDgwNTI3fQ.QajYvqgXSALiIKig57m0KiCY85PsjRZPgc8avV7bnyk",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNjA0NTc5ODcyfQ.Ch8l2Xzn0WRYLvzjlYpL8kpYRaD5-sLSRtJgIMEE6Qo",
 							"type": "string"
 						}
 					]
@@ -152,50 +198,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"new_password\": \"testowy\",\n    \"old_password\": \"testowy\"\n\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "127.0.0.1:5000/api/cv/2/password",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"api",
-						"cv",
-						"2",
-						"password"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "127.0.0.1:5000/api/cv/",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNjA0MDgwNTI3fQ.QajYvqgXSALiIKig57m0KiCY85PsjRZPgc8avV7bnyk",
-							"type": "string"
-						}
-					]
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"firstname\": \"3\",\n    \"lastname\": \"User\",\n    \"skills\": [\n        {\n            \"skill_name\": \"sql\",\n            \"skill_level\": 20\n        },\n        {\n            \"skill_name\": \"python\",\n            \"skill_level\": 2\n        },\n        {\n            \"skill_name\": \"judo\",\n            \"skill_level\": 10\n        }\n    ],\n    \"experience\": [\n        {\n            \"company\": \"Projekt\",\n            \"project\": \"Projekt\",\n            \"duration\": 1\n        }\n    ]\n}",
+					"raw": "{\n    \"username\": \"dupa\",\n    \"password\": \"dupa\",\n    \"firstname\": \"3\",\n    \"lastname\": \"User\",\n    \"skills\": [\n        {\n            \"skill_name\": \"sql\",\n            \"skill_level\": 20\n        },\n        {\n            \"skill_name\": \"python\",\n            \"skill_level\": 2\n        },\n        {\n            \"skill_name\": \"judo\",\n            \"skill_level\": 10\n        }\n    ],\n    \"experience\": [\n        {\n            \"company\": \"Projekt\",\n            \"project\": \"Projekt\",\n            \"duration\": 1\n        }\n    ]\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -221,14 +224,14 @@
 			"response": []
 		},
 		{
-			"name": "127.0.0.1:5000/api/cv/",
+			"name": "127.0.0.1:5000/api/cv/3",
 			"request": {
 				"auth": {
 					"type": "bearer",
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNjA0MDgwNTI3fQ.QajYvqgXSALiIKig57m0KiCY85PsjRZPgc8avV7bnyk",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNjA0NTc5ODcyfQ.Ch8l2Xzn0WRYLvzjlYpL8kpYRaD5-sLSRtJgIMEE6Qo",
 							"type": "string"
 						}
 					]
@@ -245,7 +248,7 @@
 					}
 				},
 				"url": {
-					"raw": "127.0.0.1:5000/api/cv/5",
+					"raw": "127.0.0.1:5000/api/cv/3",
 					"host": [
 						"127",
 						"0",
@@ -256,7 +259,7 @@
 					"path": [
 						"api",
 						"cv",
-						"5"
+						"3"
 					]
 				}
 			},
@@ -275,7 +278,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"firstname\": \"Placek\",\n    \"lastname\": \"\",\n    \"skills\": {},\n    \"experience\": []\n   \n}",
+					"raw": "",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -283,7 +286,7 @@
 					}
 				},
 				"url": {
-					"raw": "127.0.0.1:5000/api/cv/2",
+					"raw": "127.0.0.1:5000/api/cv/1",
 					"host": [
 						"127",
 						"0",
@@ -294,7 +297,7 @@
 					"path": [
 						"api",
 						"cv",
-						"2"
+						"1"
 					]
 				}
 			},
@@ -337,6 +340,49 @@
 						"api",
 						"cv",
 						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "127.0.0.1:5000/api/cv/2/password",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNjA0MDgwNTI3fQ.QajYvqgXSALiIKig57m0KiCY85PsjRZPgc8avV7bnyk",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"new_password\": \"testowy\",\n    \"old_password\": \"testowy\"\n\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:5000/api/cv/2/password",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"cv",
+						"2",
+						"password"
 					]
 				}
 			},

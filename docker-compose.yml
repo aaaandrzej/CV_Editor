@@ -35,5 +35,18 @@ services:
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_NAME=${DB_NAME}
+      - SECRET_KEY=${SECRET_KEY}
+  app_test:
+    container_name: cv_editor_app_test
+    build: .
+    ports:
+      - 5001:5000
+    environment:
+      - DB_HOST=database_test
+      - DB_PORT=3306
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - SECRET_KEY=${SECRET_KEY}
 volumes:
   mysql_volume:

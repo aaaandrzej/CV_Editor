@@ -162,7 +162,7 @@ def api_cv_id_put(current_user: User, user_id: int) -> Tuple[dict, int]:
         return error_response('bad input data', 400, None)
 
     if cv_being_updated.username != json_data['username']:
-        if not check_if_username_unique(session, json_data['username']):
+        if check_if_username_unique(session, json_data['username']):
             return error_response('bad input data', 400, None)
 
     cv_being_updated.username = json_data['username']

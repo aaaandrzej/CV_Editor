@@ -38,7 +38,7 @@ Examples:
 
 
 @negative
-Scenario Outline: Use post method on api_cv_post endpoint and ver
+Scenario Outline: Use post method on api_cv_post endpoint and verify that access is denied
     Given an app is running
     And db is up
     And db contains "admin" record
