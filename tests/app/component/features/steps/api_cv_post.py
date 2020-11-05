@@ -18,7 +18,7 @@ def step_impl(context, json_file):
     try:
         context.token
     except AttributeError:
-        context.token = ''
+        context.token = 'xxx'
 
     context.endpoint_response = requests.post(url, json=context.payload, headers={'Authorization': f'Bearer {context.token}'})
 
