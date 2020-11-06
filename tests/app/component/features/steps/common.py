@@ -63,6 +63,7 @@ def step_impl(context):
     response = requests.get(url, auth=(login, password))
 
     context.token = response.json()['token']
+    context.header = {'Authorization': f'Bearer {context.token}'}
 
     assert len(context.token) == 131, \
         f'actual: {len(context.token)}, expected: {131}'

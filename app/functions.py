@@ -52,13 +52,3 @@ def create_param_subs(json: List[dict]) -> str:
 def error_response(msg: str, status: int, ex: Optional[Exception] = None) -> Tuple[dict, int]:
     logging.exception(ex)
     return {'error': msg}, status
-
-
-def check_if_username_unique(session: Session, username: str) -> bool:
-
-    try:
-        session.query(User).filter_by(username=username).one()
-        return True
-    except NoResultFound as ex:
-        logging.exception(ex)
-        return False

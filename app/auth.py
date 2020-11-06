@@ -21,7 +21,7 @@ def extract_user():
         token = token.split(' ')[1]
         data = jwt.decode(token, os.environ['SECRET_KEY'])
 
-    except (DecodeError, KeyError):
+    except (DecodeError, KeyError, IndexError):
         raise InvalidTokenError
     except ExpiredSignatureError:
         raise ExpiredTokenError

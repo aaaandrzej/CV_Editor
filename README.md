@@ -21,7 +21,7 @@ Accepted JSON structure:
 - CV creation/ modification:
 {
     "username": "user",
-    "password": "dupa",
+    "password": "password",
     "firstname": "3",
     "lastname": "User",
     "skills": [
@@ -49,8 +49,8 @@ Accepted JSON structure:
 
 - password change:
 {
-    "new_password": "apud",
-    "old_password": "dupa"
+    "new_password": "new_password",
+    "old_password": "password"
 }
 
 - stats and count requests:
@@ -105,13 +105,13 @@ Start app and production database, assuming you already have any records in your
 
 `make start-app` 
 
-`(or DB_PASSWORD=dupa DB_USER=user DB_NAME=my_db SECRET_KEY=supersecretkey make start-app)`
+`(or DB_PASSWORD=password DB_USER=user DB_NAME=my_db SECRET_KEY=secretkey make start-app)`
 
 Trigger db schema migration and first user creation, when starting app for the first time:
 
 `make init-db` 
 
-`(or DB_PASSWORD=dupa DB_USER=user DB_NAME=my_db APP_USER=admin APP_PASSWORD=nimda PYTHONPATH=. DB_PORT=3306 DB_HOST=localhost make init-db)`
+`(or DB_PASSWORD=password DB_USER=user DB_NAME=my_db APP_USER=admin APP_PASSWORD=password PYTHONPATH=. DB_PORT=3306 DB_HOST=localhost make init-db)`
 
 #### Makefile commands - running tests:
 
@@ -123,11 +123,11 @@ Run component tests:
 
 `make component-prep`
 
-`(or DB_PORT=3307 DB_PASSWORD=dupa DB_USER=user DB_NAME=my_db SECRET_KEY=supersecretkey make component-prep)`
+`(or DB_PORT=3307 DB_PASSWORD=password DB_USER=user DB_NAME=my_db SECRET_KEY=secretkey make component-prep)`
 
 `alembic upgrade head`
 
-`(or DB_PASSWORD=dupa DB_USER=user DB_NAME=my_db PYTHONPATH=. DB_PORT=3307 DB_HOST=localhost alembic upgrade head)`
+`(or DB_PASSWORD=password DB_USER=user DB_NAME=my_db PYTHONPATH=. DB_PORT=3307 DB_HOST=localhost alembic upgrade head)`
 
 `make component-app`
 

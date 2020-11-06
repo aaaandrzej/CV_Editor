@@ -2,7 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 import os
 
-APP_URL = 'http://127.0.0.1:5001/'
+APP_URL = 'http://127.0.0.1:5000/'
 DB_HOST = 'localhost'
 DB_PORT = 3307
 DB_USER = 'user'
@@ -25,3 +25,4 @@ def get_session() -> Session:
 def before_all(context):
     context.session = get_session()
     context.app_url = {APP_URL}
+    context.header = None

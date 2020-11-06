@@ -48,7 +48,7 @@ Scenario Outline: Use post method on api_cv_post endpoint and verify that access
 
 Examples:
 | json_file  | status_code | response                       |
-| 201-1.json | 401         | {"message": "token is invalid"}|
-| 400-1.json | 401         | {"message": "token is invalid"}|
+| 201-1.json | 401         | {"message": "token is missing"}|
+| 400-1.json | 401         | {"message": "token is missing"}|
 
 

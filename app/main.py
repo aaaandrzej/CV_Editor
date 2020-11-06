@@ -11,7 +11,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from app.auth import token_required
 from app.functions import replace_skills_with_json, replace_experience_with_json, parse_params, create_param_subs, \
-    error_response, check_if_username_unique
+    error_response
 from app.models import User
 from app.session import get_session
 from app.sql_queries import SQL_COUNT, SQL_STATS
@@ -148,9 +148,8 @@ def api_cv_id_get(user_id: int) -> Tuple[dict, int]:
 def api_cv_id_put(current_user: User, user_id: int) -> Tuple[dict, int]:
     # UPDATE CV OF ID [id] WITH JSON DATA
 
-    if not current_user.admin:
-        if current_user.id != int(user_id):
-            return error_response('not authorized', 401, None)
+    if not current_user.admin and current_user.id != int(user_id):
+        return error_response('not authorized', 401, None)
 
     json_data = request.get_json()
 
@@ -161,20 +160,17 @@ def api_cv_id_put(current_user: User, user_id: int) -> Tuple[dict, int]:
     if cv_being_updated is None:
         return error_response('bad input data', 400, None)
 
-    if cv_being_updated.username != json_data['username']:
-        if check_if_username_unique(session, json_data['username']):
-            return error_response('bad input data', 400, None)
-
     cv_being_updated.username = json_data['username']
-
     cv_being_updated.firstname = json_data['firstname']
     cv_being_updated.lastname = json_data['lastname']
 
-    replace_skills_with_json(session, cv_being_updated, json_data)
-
     replace_experience_with_json(cv_being_updated, json_data)
 
-    session.commit()
+    try:
+        replace_skills_with_json(session, cv_being_updated, json_data)
+        session.commit()
+    except IntegrityError as ex:
+        return error_response('bad input data', 400, ex)
 
     return jsonify(cv_being_updated.object_as_dict()), 200
 
@@ -206,9 +202,8 @@ def api_cv_id_delete(current_user: User, user_id: int) -> Tuple[dict, int]:
 def api_cv_id_password(current_user: User, user_id: int) -> Tuple[dict, int]:
     # CHANGE YOUR PASSWORD
 
-    if not current_user.admin:
-        if current_user.id != int(user_id):
-            return error_response('not authorized', 401, None)
+    if not current_user.admin and current_user.id != int(user_id):
+        return error_response('not authorized', 401, None)
 
     json_data = request.get_json()
 

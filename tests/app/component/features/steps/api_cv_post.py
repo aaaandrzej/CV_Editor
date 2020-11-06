@@ -16,11 +16,11 @@ def step_impl(context, json_file):
     url = urljoin(APP_URL, 'api/cv')
 
     try:
-        context.token
+        context.header
     except AttributeError:
-        context.token = 'xxx'
+        context.header = None
 
-    context.endpoint_response = requests.post(url, json=context.payload, headers={'Authorization': f'Bearer {context.token}'})
+    context.endpoint_response = requests.post(url, json=context.payload, headers=context.header)
 
     assert context.endpoint_response.status_code != 500, \
         f'actual: {context.endpoint_response.status_code}, expected not 500'
