@@ -5,7 +5,6 @@ start-app:
 
 init-db:
 	PYTHONPATH=. alembic upgrade head
-	PYTHONPATH=. python app/init_db.py
 
 unittest-app:
 	PYTHONPATH=. pytest tests/app/unit/

@@ -23,22 +23,38 @@ app_admin_user = User(username=os.environ['APP_USER'],
                       password=generate_password_hash(os.environ['APP_PASSWORD'], method='sha256', salt_length=8),
                       firstname=os.environ['APP_USER'][:2],
                       lastname=os.environ['APP_USER'][2:],
-                      admin=True)
+                      admin=True,
+                      id=1)
 
-password = generate_password_hash(os.environ['APP_PASSWORD'], method='sha256', salt_length=8)
+user = sa.sql.table('user',
+                    sa.sql.column('id', sa.Integer),
+                    sa.sql.column('username', sa.String),
+                    sa.sql.column('password', sa.String),
+                    sa.sql.column('firstname', sa.String),
+                    sa.sql.column('lastname', sa.String),
+                    sa.sql.column('admin', sa.Boolean)
+                    )
 
 
-def upgrade():  # TODO in progress, do sparametryzowania zmiennymi
-    query = """
-    INSERT INTO user (username, password, firstname, lastname, admin) 
-    VALUES ("admin", "password" , "name", "lastname", True);
-    """
-
-    op.execute(query)
+def upgrade():
+    op.bulk_insert(user,
+                   [{'id': app_admin_user.id,
+                     'firstname': app_admin_user.firstname,
+                     'lastname': app_admin_user.lastname,
+                     'username': app_admin_user.username,
+                     'password': app_admin_user.password,
+                     'admin': True}]
+                   )
 
 
 def downgrade():
-    query = """
-    DELETE FROM user WHERE username = "admin";
-    """
+    query = '''
+    DELETE FROM user WHERE username = 'admin';
+    '''
     op.execute(query)
+
+    # query = '''
+    # DELETE FROM user WHERE username = ?;
+    # '''
+    # param = app_admin_user.username
+    # op.execute(query, param)
