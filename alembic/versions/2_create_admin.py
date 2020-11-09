@@ -26,35 +26,14 @@ app_admin_user = User(username=os.environ['APP_USER'],
                       admin=True,
                       id=1)
 
-user = sa.sql.table('user',
-                    sa.sql.column('id', sa.Integer),
-                    sa.sql.column('username', sa.String),
-                    sa.sql.column('password', sa.String),
-                    sa.sql.column('firstname', sa.String),
-                    sa.sql.column('lastname', sa.String),
-                    sa.sql.column('admin', sa.Boolean)
-                    )
-
 
 def upgrade():
-    op.bulk_insert(user,
-                   [{'id': app_admin_user.id,
-                     'firstname': app_admin_user.firstname,
-                     'lastname': app_admin_user.lastname,
-                     'username': app_admin_user.username,
-                     'password': app_admin_user.password,
-                     'admin': True}]
-                   )
+    query = f"INSERT INTO user (id, username, password, firstname, lastname, admin) VALUES {app_admin_user.id, app_admin_user.username, app_admin_user.password, app_admin_user.firstname, app_admin_user.lastname, app_admin_user.admin}"
+
+    op.execute(query)
 
 
 def downgrade():
-    query = '''
-    DELETE FROM user WHERE username = 'admin';
-    '''
-    op.execute(query)
+    query = f"DELETE FROM user WHERE username = '{app_admin_user.username}'"
 
-    # query = '''
-    # DELETE FROM user WHERE username = ?;
-    # '''
-    # param = app_admin_user.username
-    # op.execute(query, param)
+    op.execute(query)

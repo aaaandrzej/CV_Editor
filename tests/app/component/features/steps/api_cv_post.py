@@ -15,9 +15,7 @@ def step_impl(context, json_file):
 
     url = urljoin(APP_URL, 'api/cv')
 
-    try:
-        context.header
-    except AttributeError:
+    if not hasattr(context, 'header'):
         context.header = None
 
     context.endpoint_response = requests.post(url, json=context.payload, headers=context.header)
