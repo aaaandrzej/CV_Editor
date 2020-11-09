@@ -1,4 +1,7 @@
 import pytest
+from unittest.mock import patch
+
+from app.models import User
 
 
 @pytest.fixture
@@ -14,5 +17,6 @@ def client(app):
 
 
 def test_index_response(client):
+
     rv = client.get('/')
     assert rv.data == b'For API please use /api/cv or /api/cv/<id>'

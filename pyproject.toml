@@ -9,10 +9,9 @@ python = "^3.8"
 PyMySQL = "^0.10.1"
 SQLAlchemy = "^1.3.19"
 flask = "^1.1.2"
-alembic = "^1.4.3"
-cryptography = "^3.1"
 gunicorn = "^20.0.4"
 boto3 = "^1.15.11"
+PyJWT = "^1.7.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.0.2"
@@ -20,6 +19,7 @@ behave = "^1.2.6"
 requests = "^2.24.0"
 moto = "^1.3.16"
 localstack = "^0.11.5"
+alembic = "^1.4.3"
 
 [build-system]
 requires = ["poetry>=0.12"]
